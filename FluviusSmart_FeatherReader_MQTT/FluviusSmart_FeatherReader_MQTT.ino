@@ -42,12 +42,14 @@ void WiFiEvent(WiFiEvent_t event) {
       Serial.println("WiFi connected");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
+      digitalWrite(WIFI_LED,HIGH);
       connectToMqtt();
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       Serial.println("WiFi lost connection");
       xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
       xTimerStart(wifiReconnectTimer, 0);
+      digitalWrite(WIFI_LED, LOW);
       break;
   }
 }
@@ -57,6 +59,7 @@ void onMqttConnect(bool sessionPresent) {
   Serial.println("Connected to MQTT.");
   Serial.print("Session present: ");
   Serial.println(sessionPresent);
+  digitalWrite(MQTT_LED, HIGH;
 }
 
 // On disconection from MQTT
@@ -65,6 +68,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   if (WiFi.isConnected()) {
     xTimerStart(mqttReconnectTimer, 0);
   }
+  digitalWrite(MQTT_LED, LOW);
 }
 
 void setup() {
@@ -76,9 +80,13 @@ void setup() {
   // Pin Setup
   pinMode(STATE_LED, OUTPUT);
   pinMode(REQUEST_PIN, OUTPUT);
+  pinMode(WIFI_LED, OUTPUT);
+  pinMode(MQTT_LED,OUTPUT);
 
   // Clear outputs
   digitalWrite(STATE_LED, LOW);
+  digitalWrite(WIFI_LED, LOW);
+  digitalWrite(MQTT_LED, LOW);
   disable_meter();
 
   // Setup timers for WiFi and MQTT
@@ -169,9 +177,21 @@ void publish_received_data(){
    uint16_t packetIdPub4 = mqttClient.publish(MQTT_P_H_TARIF, 1, true, String(PRODUCTION_HIGH_TARIF).c_str());                            
    uint16_t packetIdPub5 = mqttClient.publish(MQTT_C_T_POWER, 1, true, String(TOTAL_POWER_CONSUMPTION).c_str());
    uint16_t packetIdPub9 = mqttClient.publish(MQTT_P_T_POWER, 1, true, String(TOTAL_POWER_PRODUCTION).c_str());
-   uint16_t packetIdPub13 = mqttClient.publish(MQTT_A_TARIF, 1, true, String(ACTUAL_TARIF).c_str());                            
-   uint16_t packetIdPub14 = mqttClient.publish(MQTT_C_GAS, 1, true, String(GAS_METER_M3).c_str());                            
-   uint16_t packetIdPub15 = mqttClient.publish(MQTT_C_WATER, 1, true, String(WATER_METER_M3).c_str());
+   uint16_t packetIdPub13 = mqttClient.publish(MQTT_A_TARIF, 1, true, String(ACTUAL_TARIF).c_str());
+   uint16_t packetIdPub14 = mqttClient.publish(MQTT_V_L1, 1, true, String(ACTUAL_VOLTAGE_L1).c_str());
+   uint16_t packetIdPub15 = mqttClient.publish(MQTT_V_L2, 1, true, String(ACTUAL_VOLTAGE_L2).c_str());
+   uint16_t packetIdPub16 = mqttClient.publish(MQTT_V_L3, 1, true, String(ACTUAL_VOLTAGE_L3).c_str());
+   uint16_t packetIdPub17 = mqttClient.publish(MQTT_A_L1, 1, true, String(ACTUAL_CURRENT_L1).c_str());
+   uint16_t packetIdPub18 = mqttClient.publish(MQTT_A_L2, 1, true, String(ACTUAL_CURRENT_L2).c_str());
+   uint16_t packetIdPub19 = mqttClient.publish(MQTT_A_L3, 1, true, String(ACTUAL_CURRENT_L3).c_str());
+   uint16_t packetIdPub20 = mqttClient.publish(MQTT_C_L1_POWER, 1, true, String(L1_POWER_CONSUMPTION).c_str());
+   uint16_t packetIdPub21 = mqttClient.publish(MQTT_C_L2_POWER, 1, true, String(L2_POWER_CONSUMPTION).c_str());
+   uint16_t packetIdPub22 = mqttClient.publish(MQTT_C_L3_POWER, 1, true, String(L3_POWER_CONSUMPTION).c_str());
+   uint16_t packetIdPub23 = mqttClient.publish(MQTT_P_L1_POWER, 1, true, String(L1_POWER_PRODUCTION).c_str());
+   uint16_t packetIdPub24 = mqttClient.publish(MQTT_P_L2_POWER, 1, true, String(L2_POWER_PRODUCTION).c_str());
+   uint16_t packetIdPub25 = mqttClient.publish(MQTT_P_L3_POWER, 1, true, String(L3_POWER_PRODUCTION).c_str());
+   uint16_t packetIdPub26 = mqttClient.publish(MQTT_C_GAS, 1, true, String(GAS_METER_M3).c_str());                            
+   uint16_t packetIdPub27 = mqttClient.publish(MQTT_C_WATER, 1, true, String(WATER_METER_M3).c_str());
    Serial.println("Published to MQTT");          
 }
 
@@ -190,6 +210,13 @@ void debug_received_data(){
   Serial.print("TOTAL_POWER_PRODUCTION = ");
   Serial.println(TOTAL_POWER_PRODUCTION);
   Serial.print("ACTUAL_TARIF = ");
+
+  // Hier verder doen.
+
+
+
+
+
   Serial.println(ACTUAL_TARIF);
   Serial.print("GAS_METER_M3 = ");
   Serial.println(GAS_METER_M3);

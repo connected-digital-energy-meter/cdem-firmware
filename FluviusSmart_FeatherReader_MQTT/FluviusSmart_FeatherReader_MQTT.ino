@@ -210,14 +210,31 @@ void debug_received_data(){
   Serial.print("TOTAL_POWER_PRODUCTION = ");
   Serial.println(TOTAL_POWER_PRODUCTION);
   Serial.print("ACTUAL_TARIF = ");
-
-  // Hier verder doen.
-
-
-
-
-
   Serial.println(ACTUAL_TARIF);
+  Serial.print("ACTUAL_VOLTAGE_L1 =");
+  Serial.println(ACTUAL_VOLTAGE_L1);
+  Serial.print("ACTUAL_VOLTAGE_L2 =");
+  Serial.println(ACTUAL_VOLTAGE_L2);
+  Serial.print("ACTUAL_VOLTAGE_L3 =");
+  Serial.println(ACTUAL_VOLTAGE_L3);
+  Serial.print("ACTUAL_CURRENT_L1 =");
+  Serial.println(ACTUAL_CURRENT_L1);
+  Serial.print("ACTUAL_CURRENT_L2 =");
+  Serial.println(ACTUAL_CURRENT_L2);
+  Serial.print("ACTUAL_CURRENT_L3 =");
+  Serial.println(ACTUAL_CURRENT_L3);
+  Serial.print("L1_POWER_COMSUMPTION = ");
+  Serial.println(L1_POWER_CONSUMPTION);
+  Serial.print("L2_POWER_COMSUMPTION = ");
+  Serial.println(L2_POWER_CONSUMPTION);
+  Serial.print("L3_POWER_COMSUMPTION = ");
+  Serial.println(L3_POWER_CONSUMPTION);
+  Serial.print("L1_POWER_PRODUCTION = ");
+  Serial.println(L1_POWER_PRODUCTION);
+  Serial.print("L2_POWER_PRODUCTION = ");
+  Serial.println(L2_POWER_PRODUCTION);
+  Serial.print("L3_POWER_PRODUCTION = ");
+  Serial.println(L3_POWER_PRODUCTION);
   Serial.print("GAS_METER_M3 = ");
   Serial.println(GAS_METER_M3);
   Serial.print("WATER_METER_M3 =");
@@ -304,6 +321,42 @@ bool decode_datagram()
 
     // 0-0:96.14.0 = OBIS reference actual tariff
     ACTUAL_TARIF = ParseDataValue("0-0:96.14.0",1);
+
+    // 1-0:32.7.0 = OBIS reference actual voltage L1
+    ACTUAL_VOLTAGE_L1 - ParseDataValue("1-0:32.7.0");
+
+    // 1-0:52.7.0 = OBIS reference actual voltage L2
+    ACTUAL_VOLTAGE_L2 - ParseDataValue("1-0:52.7.0");
+
+    // 1-0:72.7.0 = OBIS reference actual voltage L3
+    ACTUAL_VOLTAGE_L3 - ParseDataValue("1-0:72.7.0");
+
+    // 1-0:31.7.0 = OBIS reference actual current L1
+    ACTUAL_CURRENT_L1 - ParseDataValue("1-0:31.7.0");
+
+    // 1-0:51.7.0 = OBIS reference actual current L2
+    ACTUAL_CURRENT_L2 - ParseDataValue("1-0:51.7.0");
+    
+    // 1-0:71.7.0 = OBIS reference actual current L3
+    ACTUAL_CURRENT_L3 - ParseDataValue("1-0:71.7.0");
+    
+    // 1-0:22.7.0 = OBIS reference actual power comsumption L1
+    L1_POWER_CONSUMPTION - ParseDataValue("1-0:22.7.0");
+
+    // 1-0:42.7.0 = OBIS reference actual power comsumption L2
+    L2_POWER_CONSUMPTION - ParseDataValue("1-0:42.7.0");
+    
+    // 1-0:62.7.0 = OBIS reference actual power comsumption L3
+    L3_POWER_CONSUMPTION - ParseDataValue("1-0:62.7.0");
+
+    // 1-0:21.7.0 = OBIS reference actual power production L1
+    L1_POWER_PRODUCTION - ParseDataValue("1-0:21.7.0");
+
+    // 1-0:41.7.0 = OBIS reference actual power production L2
+    L2_POWER_PRODUCTION - ParseDataValue("1-0:41.7.0");
+
+    // 1-0:61.7.0 = OBIS reference actual power production L3
+    L3_POWER_PRODUCTION - ParseDataValue("1-0:61.7.0");
     
     // 0-1:24.2.3 = OBIS reference gas delivered to client with temperature correction , 0-n where the n is the device number, possibly you need to change this number for your configuration
     GAS_METER_M3 = ParseDataValue("0-1:24.2.3",2);

@@ -134,15 +134,20 @@ void loop() {
     } else if (currentState == State::READING_DATAGRAM) {
       
       // Read data
-      read_datagram();    
-
+      read_datagram();
     } else if (currentState == State::DATAGRAM_READY) {
-      
       // Stop requesting data
       digitalWrite(STATE_LED, HIGH);
       SerialDebug.println("We have a DATAGRAM ready for processing");
       disable_meter();
-      currentState = State::PROCESSING_DATA_GRAM;
+
+      // CRC16 check
+      if(Crc16()){
+        currentState = State::PROCESSING_DATA_GRAM;  
+      } else {
+        SerialDebug.println("CRC16 check failed");
+        currentState = State::IDLE;
+      }
     } else if (currentState == State::PROCESSING_DATA_GRAM){  
       
       // Decode data
@@ -396,4 +401,44 @@ double ParseDataValue(char* key, int datablock)
       // return invalid if OBIS reference not found
       return -1;
     }
+}
+
+bool Crc16(){
+  // Start with a fase validation
+  bool validation=false;
+
+  // Find the start of the datagram
+  char* startChar = strstr(datagramBuffer, "/");
+
+  // Find the end of the datagram
+  char* endChar = strstr(datagramBuffer, "!");
+
+  // Get the actual datagram
+  char datagram[1024] = datagramBuffer.substring(startChar,endChar+1);
+
+  // Get the CRC checksum
+  char crccheck[4] = datagramBuffer.substring(endChar+1,endChar+5);
+
+  // Starting crc
+  char crc[4] = 0;
+
+  // crc calculaton for each char position
+  for(pos=startChar;pos<=endChar;pos++){
+
+    crc ^= (unsigned int)datagram[pos];    // XOR byte into least sig. byte of crc
+
+    for (int i = 8; i != 0; i--) {    // Loop over each bit
+      if ((crc & 0x0001) != 0) {      // If the LSB is set
+        crc >>= 1;                    // Shift right and XOR 0xA001
+        crc ^= 0xA001;                // Polynomial
+      }
+      else                            // Else LSB is not set
+        crc >>= 1;                    // Just shift right
+    }
+  }
+
+  // If crc matches the crcchecksum at the and of the datagram we have a valid crc
+  if(crc==crccheck) validation=true;
+
+  return validation;
 }

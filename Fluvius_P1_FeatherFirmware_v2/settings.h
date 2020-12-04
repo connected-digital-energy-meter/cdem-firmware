@@ -7,12 +7,15 @@
  *
 */
 
+// Include class datagram
+#include "datagram.h"
+
 // WIFI credentials
-#define WIFI_SSID "IOTHOTSPOT"
-#define WIFI_PASSWORD "GrIoT2020"
+#define WIFI_SSID "IOTHOTSPOT"          // Via webpage
+#define WIFI_PASSWORD "GrIoT2020"       // Via webpage
 
 // Raspberri Pi Mosquitto MQTT Broker
-#define MQTT_HOST "172.17.100.0"
+#define MQTT_HOST "172.17.100.2"        // Via webpage
 #define MQTT_PORT 1883
 
 // MQTT Topics
@@ -45,8 +48,8 @@
 // Set DataRequest pin
 const int STATE_LED = 13;
 const int REQUEST_PIN = 14;
-const int WIFI_LED = 12;
-const int MQTT_LED = 11;
+const int WIFI_LED = 12;  // Veranderen naar RGB
+const int MQTT_LED = 11;  // Veranderen naar RGB
 
 // Define a serial for debugging and for reading the meter
 #define SerialDebug Serial
@@ -62,7 +65,7 @@ enum class State {
 };
 
 // Set to store received datagram
-char datagramBuffer[1024] = { 0 };
+datagram P1_data;
 
 // Set a readingpointer and startdetection
 unsigned int readPointer = 0;

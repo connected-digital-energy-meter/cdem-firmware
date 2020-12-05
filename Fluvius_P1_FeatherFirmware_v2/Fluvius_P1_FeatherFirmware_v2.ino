@@ -59,7 +59,7 @@ void onMqttConnect(bool sessionPresent) {
   Serial.println("Connected to MQTT.");
   Serial.print("Session present: ");
   Serial.println(sessionPresent);
-  digitalWrite(MQTT_LED, HIGH; // Veranderen naar RGB
+  digitalWrite(MQTT_LED, HIGH); // Veranderen naar RGB
 }
 
 // On disconection from MQTT

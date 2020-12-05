@@ -59,7 +59,7 @@ void onMqttConnect(bool sessionPresent) {
   Serial.println("Connected to MQTT.");
   Serial.print("Session present: ");
   Serial.println(sessionPresent);
-  digitalWrite(MQTT_LED, HIGH;
+  digitalWrite(MQTT_LED, HIGH);
 }
 
 // On disconection from MQTT
@@ -328,40 +328,40 @@ bool decode_datagram()
     ACTUAL_TARIF = ParseDataValue("0-0:96.14.0",1);
 
     // 1-0:32.7.0 = OBIS reference actual voltage L1
-    ACTUAL_VOLTAGE_L1 - ParseDataValue("1-0:32.7.0");
+    ACTUAL_VOLTAGE_L1 - ParseDataValue("1-0:32.7.0",1);
 
     // 1-0:52.7.0 = OBIS reference actual voltage L2
-    ACTUAL_VOLTAGE_L2 - ParseDataValue("1-0:52.7.0");
+    ACTUAL_VOLTAGE_L2 - ParseDataValue("1-0:52.7.0",1);
 
     // 1-0:72.7.0 = OBIS reference actual voltage L3
-    ACTUAL_VOLTAGE_L3 - ParseDataValue("1-0:72.7.0");
+    ACTUAL_VOLTAGE_L3 - ParseDataValue("1-0:72.7.0",1);
 
     // 1-0:31.7.0 = OBIS reference actual current L1
-    ACTUAL_CURRENT_L1 - ParseDataValue("1-0:31.7.0");
+    ACTUAL_CURRENT_L1 - ParseDataValue("1-0:31.7.0",1);
 
     // 1-0:51.7.0 = OBIS reference actual current L2
-    ACTUAL_CURRENT_L2 - ParseDataValue("1-0:51.7.0");
+    ACTUAL_CURRENT_L2 - ParseDataValue("1-0:51.7.0",1);
     
     // 1-0:71.7.0 = OBIS reference actual current L3
-    ACTUAL_CURRENT_L3 - ParseDataValue("1-0:71.7.0");
+    ACTUAL_CURRENT_L3 - ParseDataValue("1-0:71.7.0",1);
     
     // 1-0:22.7.0 = OBIS reference actual power comsumption L1
-    L1_POWER_CONSUMPTION - ParseDataValue("1-0:22.7.0");
+    L1_POWER_CONSUMPTION - ParseDataValue("1-0:22.7.0",1);
 
     // 1-0:42.7.0 = OBIS reference actual power comsumption L2
-    L2_POWER_CONSUMPTION - ParseDataValue("1-0:42.7.0");
+    L2_POWER_CONSUMPTION - ParseDataValue("1-0:42.7.0",1);
     
     // 1-0:62.7.0 = OBIS reference actual power comsumption L3
-    L3_POWER_CONSUMPTION - ParseDataValue("1-0:62.7.0");
+    L3_POWER_CONSUMPTION - ParseDataValue("1-0:62.7.0",1);
 
     // 1-0:21.7.0 = OBIS reference actual power production L1
-    L1_POWER_PRODUCTION - ParseDataValue("1-0:21.7.0");
+    L1_POWER_PRODUCTION - ParseDataValue("1-0:21.7.0",1);
 
     // 1-0:41.7.0 = OBIS reference actual power production L2
-    L2_POWER_PRODUCTION - ParseDataValue("1-0:41.7.0");
+    L2_POWER_PRODUCTION - ParseDataValue("1-0:41.7.0",1);
 
     // 1-0:61.7.0 = OBIS reference actual power production L3
-    L3_POWER_PRODUCTION - ParseDataValue("1-0:61.7.0");
+    L3_POWER_PRODUCTION - ParseDataValue("1-0:61.7.0",1);
     
     // 0-1:24.2.3 = OBIS reference gas delivered to client with temperature correction , 0-n where the n is the device number, possibly you need to change this number for your configuration
     GAS_METER_M3 = ParseDataValue("0-1:24.2.3",2);
@@ -407,7 +407,9 @@ bool Crc16(){
   // Start with a fase validation
   bool validation=false;
 
-  // Find the start of the datagram
+  // deze crc check is fout
+
+  /*// Find the start of the datagram
   char* startChar = strstr(datagramBuffer, "/");
 
   // Find the end of the datagram
@@ -423,7 +425,7 @@ bool Crc16(){
   char crc[4] = 0;
 
   // crc calculaton for each char position
-  for(pos=startChar;pos<=endChar;pos++){
+  for(int pos=startChar;pos<=endChar;pos++){
 
     crc ^= (unsigned int)datagram[pos];    // XOR byte into least sig. byte of crc
 
@@ -438,7 +440,8 @@ bool Crc16(){
   }
 
   // If crc matches the crcchecksum at the and of the datagram we have a valid crc
-  if(crc==crccheck) validation=true;
+  if(crc==crccheck) validation=true;*/
+  validation=true;
 
   return validation;
 }

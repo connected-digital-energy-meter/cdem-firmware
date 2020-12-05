@@ -181,62 +181,62 @@ class datagram
         Serial.println(ACTUAL_TARIF);
 
         // 1-0:32.7.0 = OBIS reference actual voltage L1
-        ACTUAL_VOLTAGE_L1 - ParseDataValue("1-0:32.7.0");
+        ACTUAL_VOLTAGE_L1 - ParseDataValue("1-0:32.7.0",1);
         Serial.print("ACTUAL_VOLTAGE_L1 =");
         Serial.println(ACTUAL_VOLTAGE_L1);
 
         // 1-0:52.7.0 = OBIS reference actual voltage L2
-        ACTUAL_VOLTAGE_L2 - ParseDataValue("1-0:52.7.0");
+        ACTUAL_VOLTAGE_L2 - ParseDataValue("1-0:52.7.0",1);
         Serial.print("ACTUAL_VOLTAGE_L2 =");
         Serial.println(ACTUAL_VOLTAGE_L2);
 
         // 1-0:72.7.0 = OBIS reference actual voltage L3
-        ACTUAL_VOLTAGE_L3 - ParseDataValue("1-0:72.7.0");
+        ACTUAL_VOLTAGE_L3 - ParseDataValue("1-0:72.7.0",1);
         Serial.print("ACTUAL_VOLTAGE_L3 =");
         Serial.println(ACTUAL_VOLTAGE_L3);
 
         // 1-0:31.7.0 = OBIS reference actual current L1
-        ACTUAL_CURRENT_L1 - ParseDataValue("1-0:31.7.0");
+        ACTUAL_CURRENT_L1 - ParseDataValue("1-0:31.7.0",1);
         Serial.print("ACTUAL_CURRENT_L1 =");
         Serial.println(ACTUAL_CURRENT_L1);
 
         // 1-0:51.7.0 = OBIS reference actual current L2
-        ACTUAL_CURRENT_L2 - ParseDataValue("1-0:51.7.0");
+        ACTUAL_CURRENT_L2 - ParseDataValue("1-0:51.7.0",1);
         Serial.print("ACTUAL_CURRENT_L2 =");
         Serial.println(ACTUAL_CURRENT_L2);
         
         // 1-0:71.7.0 = OBIS reference actual current L3
-        ACTUAL_CURRENT_L3 - ParseDataValue("1-0:71.7.0");
+        ACTUAL_CURRENT_L3 - ParseDataValue("1-0:71.7.0",1);
         Serial.print("ACTUAL_CURRENT_L3 =");
         Serial.println(ACTUAL_CURRENT_L3);
 
         // 1-0:22.7.0 = OBIS reference actual power comsumption L1
-        L1_POWER_CONSUMPTION - ParseDataValue("1-0:22.7.0");
+        L1_POWER_CONSUMPTION - ParseDataValue("1-0:22.7.0",1);
         Serial.print("L1_POWER_COMSUMPTION = ");
         Serial.println(L1_POWER_CONSUMPTION);
 
         // 1-0:42.7.0 = OBIS reference actual power comsumption L2
-        L2_POWER_CONSUMPTION - ParseDataValue("1-0:42.7.0");
+        L2_POWER_CONSUMPTION - ParseDataValue("1-0:42.7.0",1);
         Serial.print("L2_POWER_COMSUMPTION = ");
         Serial.println(L2_POWER_CONSUMPTION);
 
         // 1-0:62.7.0 = OBIS reference actual power comsumption L3
-        L3_POWER_CONSUMPTION - ParseDataValue("1-0:62.7.0");
+        L3_POWER_CONSUMPTION - ParseDataValue("1-0:62.7.0",1);
         Serial.print("L3_POWER_COMSUMPTION = ");
         Serial.println(L3_POWER_CONSUMPTION);
   
         // 1-0:21.7.0 = OBIS reference actual power production L1
-        L1_POWER_PRODUCTION - ParseDataValue("1-0:21.7.0");
+        L1_POWER_PRODUCTION - ParseDataValue("1-0:21.7.0",1);
         Serial.print("L1_POWER_PRODUCTION = ");
         Serial.println(L1_POWER_PRODUCTION);
 
         // 1-0:41.7.0 = OBIS reference actual power production L2
-        L2_POWER_PRODUCTION - ParseDataValue("1-0:41.7.0");
+        L2_POWER_PRODUCTION - ParseDataValue("1-0:41.7.0",1);
         Serial.print("L2_POWER_PRODUCTION = ");
         Serial.println(L2_POWER_PRODUCTION);
         
         // 1-0:61.7.0 = OBIS reference actual power production L3
-        L3_POWER_PRODUCTION - ParseDataValue("1-0:61.7.0");
+        L3_POWER_PRODUCTION - ParseDataValue("1-0:61.7.0",1);
         Serial.print("L3_POWER_PRODUCTION = ");
         Serial.println(L3_POWER_PRODUCTION);
         

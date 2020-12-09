@@ -16,6 +16,7 @@
 #include "rgb_led.h"
 #include "variables_and_classes.h"
 #include "datagram.h"
+#include "digital_meter.h"
 
 using namespace SmartMeter;
 
@@ -29,6 +30,7 @@ Color EnableMeterColor(Color::BLUE().dim(20));
 Color DisableMeterColor(Color::BLACK());
 
 Datagram datagramtest;
+DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 
 // Connect to WiFi
 void connectToWifi() {
@@ -139,7 +141,9 @@ void loop() {
         break;
       // Read data
       case State::READING_DATAGRAM:
-        P1_data.read(currentState);
+        if (meter.read_datagram(P1_data.datagramBuffer, 1024)) {
+          currentState = State::DATAGRAM_READY;
+        }
         break;
       // Stop requesting data & CRC check  
       case State::DATAGRAM_READY:        
@@ -165,7 +169,8 @@ void loop() {
 // Enable the meter sending
 void enable_meter(void) {
   SerialDebug.println("Enabling meter");
-  digitalWrite(REQUEST_PIN, HIGH);
+  // digitalWrite(REQUEST_PIN, HIGH);
+  meter.enable();
   dataLed.color(EnableMeterColor);
   currentState = State::READING_DATAGRAM;
 }
@@ -173,7 +178,8 @@ void enable_meter(void) {
 // Disable the meter sending
 void disable_meter(void) {
   SerialDebug.println("We have a DATAGRAM ready for processing");
-  digitalWrite(REQUEST_PIN, LOW);
+  meter.disable();
+  // digitalWrite(REQUEST_PIN, LOW);
   dataLed.color(DisableMeterColor);
 }
 

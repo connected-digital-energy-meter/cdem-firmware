@@ -158,24 +158,21 @@ namespace SmartMeter {
         output+="\t Total Power Consumption = "+String(totalpowerconsumption)+"\n";
         output+="\t Total Power Production = "+String(totalpowerproduction)+"\n";
         output+="\t Total Power Production = "+String(totalpowerproduction)+"\n";
-        
-        
-        double actualvoltagel1=0;
-        double actualvoltagel2=0;
-        double actualvoltagel3=0;
-        double actualcurrentl1=0;
-        double actualcurrentl2=0;
-        double actualcurrentl3=0;
-        double l1powerconsumption=0;
-        double l2powerconsumption=0;
-        double l3powerconsumption=0;
-        double l1powerproduction=0;
-        double l2powerproduction=0;
-        double l3powerproduction=0;
-        double gasmeterm3=0;
-        double watermeterm3=0;
-        double actualtarif=0;
-
+        output+="\t Actual Voltage L1 = "+String(actualvoltagel1)+"\n";
+        output+="\t Actual Voltage L2 = "+String(actualvoltagel2)+"\n";
+        output+="\t Actual Voltage L3 = "+String(actualvoltagel3)+"\n";
+        output+="\t Actual Current L1 = "+String(actualcurrentl1)+"\n";
+        output+="\t Actual Current L2 = "+String(actualcurrentl2)+"\n";
+        output+="\t Actual Current L3 = "+String(actualcurrentl3)+"\n";
+        output+="\t Power Consumption L1 = "+String(l1powerconsumption)+"\n";
+        output+="\t Power Consumption L2 = "+String(l2powerconsumption)+"\n";
+        output+="\t Power Consumption L3 = "+String(l3powerconsumption)+"\n";
+        output+="\t Power Production L1 = "+String(l1powerproduction)+"\n";
+        output+="\t Power Production L2 = "+String(l2powerproduction)+"\n";
+        output+="\t Power Production L3 = "+String(l3powerproduction)+"\n";
+        output+="\t Gas Meter = "+String(gasmeterm3)+"\n";
+        output+="\t Water Meter = "+String(watermeterm3)+"\n";
+        output+="\t Actual Tarif = "+String(actualtarif)+"\n";
         return output;
     }
 }

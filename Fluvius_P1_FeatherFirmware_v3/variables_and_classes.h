@@ -6,6 +6,9 @@
  * General settings for P1 Reader program
  *
 */
+
+#include "crccheck.h"
+
 // WIFI credentials
 #define WIFI_SSID "IOTHOTSPOT"          // Via webpage
 #define WIFI_PASSWORD "GrIoT2020"       // Via webpage
@@ -163,56 +166,10 @@ class datagram
         }
     }
 
-    int getposition(const char* array, size_t size, char c)
-    {
-        const char* end = array + size;
-        const char* match = std::find(array, end, c);
-        return (end == match) ? -1 : (match - array);
-    } 
-
     // Do a CRC16-IBM check for validation of the received datagram
     void crc_check(State &theState){
         
-        // Find the start of the datagram
-        int begin = getposition(datagramBuffer, sizeof(datagramBuffer), '/');
-                
-        // Find the end of the datagram
-        int eind = getposition(datagramBuffer, sizeof(datagramBuffer), '!');
-                    
-        // Find the crc validation
-        char crc_validation[5];        
-        strncpy(crc_validation,datagramBuffer+eind+1,4);
-        crc_validation[4]='\0';
-        String crcvalidationtest = String(crc_validation);
-
-        SerialDebug.print("CRC found  ");
-        SerialDebug.println(crcvalidationtest);
-        
-        // Starting crc check
-        unsigned int crc = 0;
-        int positie = begin;
-
-        while (positie <= eind)
-        {
-            crc ^= (unsigned int)datagramBuffer[positie];
-            int bit = 0;
-            while (bit < 8) {
-                if ((crc & 1) != 0) {
-                    crc = (crc >> 1) ^ 0xA001;
-                }
-                else crc >>= 1;
-                bit++;
-            }
-            positie++;
-        }
-
-        String crctest(crc,HEX);
-        crctest.toUpperCase();        
-
-        SerialDebug.print("CRC calculated  ");
-        SerialDebug.println(crctest);
-
-        if(crctest == crcvalidationtest ){
+        if(SmartMeter::CRCchecker::checkCRC(datagramBuffer,sizeof(datagramBuffer))){
             theState = State::PROCESSING_DATA_GRAM; 
         } else {
             SerialDebug.println("CRC16 check failed");

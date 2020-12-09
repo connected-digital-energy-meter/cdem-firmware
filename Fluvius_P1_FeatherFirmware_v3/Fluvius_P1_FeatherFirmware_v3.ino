@@ -139,7 +139,6 @@ void loop() {
         if (meter.read_datagram(P1_data.datagramBuffer, 1024)) {
           currentState = State::DATAGRAM_READY;
         }
-        // P1_data.read(currentState);
         break;
       // Stop requesting data & CRC check  
       case State::DATAGRAM_READY:        

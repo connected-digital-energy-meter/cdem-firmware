@@ -123,49 +123,6 @@ class datagram
         datagramBuffer[1024] = { 0 };
     }
 
-    // Read a new datagram from the P1 port
-    // void read(State &theState)
-    // {
-    //     while(theState == State::READING_DATAGRAM){
-    //         if (SerialMeter.available() > 0) {
-                
-    //             // get next byte for the P1 port
-    //             char incomingByte = SerialMeter.read();
-                
-    //             // Look for the start of the datagram
-    //             if (!startDetected && incomingByte == '/') {
-    //                 startDetected = true;
-    //                 SerialDebug.println("Detected start of a datagram");
-    //             }
-
-    //             // Ignore all data on serial port if start was not detected
-    //             if (startDetected) {
-    //                 datagramBuffer[readPointer++] = incomingByte;
-
-    //                 // terug weg doen, is puur om te debuggen
-    //                 SerialDebug.print(incomingByte);
-
-    //                 // Look for the end of the datagram
-    //                 if (incomingByte == '\n' && datagramBuffer[readPointer-7] == '!') {
-    //                     SerialDebug.println("Read in full datagram");
-    //                     theState = State::DATAGRAM_READY;
-    //                     readPointer=0;
-    //                     startDetected=false;
-    //                 }
-                    
-    //                 // End of datagram not found
-    //                 if (readPointer>1024) {
-    //                     SerialDebug.println("Invalid Datagram > No end detected");
-    //                     theState = State::IDLE;
-    //                     datagramBuffer[1024]={0};
-    //                     readPointer=0;
-    //                     startDetected=false;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     // Do a CRC16-IBM check for validation of the received datagram
     void crc_check(State &theState){
         

@@ -68,8 +68,8 @@ enum class State {
 datagram P1_data;
 
 // Set a readingpointer and startdetection
-unsigned int readPointer = 0;
-bool startDetected = false;
+// unsigned int readPointer = 0;
+// bool startDetected = false;
 
 // Set to store the data values read
 double CONSUMPTION_LOW_TARIF;

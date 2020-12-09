@@ -13,15 +13,8 @@
 #include <AsyncMqttClient.h>
 
 // Include custom libraries
-#include "settings.h"
-
-// Initiate MQTT client
-AsyncMqttClient mqttClient;
-TimerHandle_t mqttReconnectTimer;
-TimerHandle_t wifiReconnectTimer;
-
-// Declare State and set state to IDLE
-State currentState = State::IDLE;
+//#include "settings.h"
+#include "variables_and_classes.h"
 
 // Connect to WiFi
 void connectToWifi() {
@@ -132,16 +125,16 @@ void loop() {
         break;
       // Read data
       case State::READING_DATAGRAM:
-        P1_data.read();
+        P1_data.read(currentState);
         break;
       // Stop requesting data & CRC check  
       case State::DATAGRAM_READY:        
         disable_meter();
-        P1_data.crc_check();        
+        P1_data.crc_check(currentState);        
         break;
       // Decode data  
       case State::PROCESSING_DATA_GRAM:
-        P1_data.decode();        
+        P1_data.decode(currentState);        
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:

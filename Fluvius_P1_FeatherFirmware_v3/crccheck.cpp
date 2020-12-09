@@ -45,11 +45,7 @@ namespace SmartMeter {
         String crccalc(crc,HEX);
         crccalc.toUpperCase();        
 
-        if(crccalc == crcvalidation ){
-            return true;
-        } else {
-            return false;
-        }
+        return(crccalc == crcvalidation);
     }
 
 }

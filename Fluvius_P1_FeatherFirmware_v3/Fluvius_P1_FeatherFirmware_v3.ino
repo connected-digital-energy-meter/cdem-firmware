@@ -15,6 +15,7 @@
 // Include custom libraries
 #include "rgb_led.h"
 #include "variables_and_classes.h"
+#include "datagram.h"
 
 using namespace SmartMeter;
 
@@ -26,6 +27,8 @@ Color NoMqttColor(Color::ORANGE().dim(20));
 Color ComOkColor(Color::GREEN().dim(20));
 Color EnableMeterColor(Color::BLUE().dim(20));
 Color DisableMeterColor(Color::BLACK());
+
+Datagram datagramtest;
 
 // Connect to WiFi
 void connectToWifi() {
@@ -116,6 +119,9 @@ void setup() {
 
   // Start time for period
   startMillis = millis();
+  
+  datagramtest.consumption_low_tarif(12.4);
+  SerialDebug.println(datagramtest.to_string());
 }
 
 void loop() {

@@ -13,8 +13,19 @@
 #include <AsyncMqttClient.h>
 
 // Include custom libraries
-//#include "settings.h"
+#include "rgb_led.h"
 #include "variables_and_classes.h"
+
+using namespace SmartMeter;
+
+RgbLed commLed(COMM_LED_R, COMM_LED_G, COMM_LED_B, 1);
+RgbLed dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4);
+
+Color NoWifiColor(Color::RED().dim(20));
+Color NoMqttColor(Color::ORANGE().dim(20));
+Color ComOkColor(Color::GREEN().dim(20));
+Color EnableMeterColor(Color::BLUE().dim(20));
+Color DisableMeterColor(Color::BLACK());
 
 // Connect to WiFi
 void connectToWifi() {
@@ -35,14 +46,14 @@ void WiFiEvent(WiFiEvent_t event) {
       Serial.println("WiFi connected");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
-      digitalWrite(WIFI_LED,HIGH); // Veranderen naar RGB
+      commLed.color(NoMqttColor);
       connectToMqtt();
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       Serial.println("WiFi lost connection");
       xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
       xTimerStart(wifiReconnectTimer, 0);
-      digitalWrite(WIFI_LED, LOW); // Veranderen naar RGB
+      commLed.color(NoWifiColor);
       break;
   }
 }
@@ -52,7 +63,7 @@ void onMqttConnect(bool sessionPresent) {
   Serial.println("Connected to MQTT.");
   Serial.print("Session present: ");
   Serial.println(sessionPresent);
-  digitalWrite(MQTT_LED, HIGH); // Veranderen naar RGB
+  commLed.color(ComOkColor);
 }
 
 // On disconection from MQTT
@@ -61,7 +72,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   if (WiFi.isConnected()) {
     xTimerStart(mqttReconnectTimer, 0);
   }
-  digitalWrite(MQTT_LED, LOW); // Veranderen naar RGB
+  commLed.color(NoMqttColor);
 }
 
 void setup() {
@@ -71,15 +82,12 @@ void setup() {
   SerialMeter.begin(METER_BAUDRATE);
 
   // Pin Setup
-  pinMode(STATE_LED, OUTPUT);
   pinMode(REQUEST_PIN, OUTPUT);
-  pinMode(WIFI_LED, OUTPUT);  // Veranderen naar RGB
-  pinMode(MQTT_LED,OUTPUT);   // Veranderen naar RGB
+  commLed.on();
+  dataLed.on();
+  commLed.color(NoWifiColor);
 
   // Clear outputs
-  digitalWrite(STATE_LED, LOW); // Veranderen naar RGB
-  digitalWrite(WIFI_LED, LOW);  // Veranderen naar RGB
-  digitalWrite(MQTT_LED, LOW);  // Veranderen naar RGB
   disable_meter();
 
   // Setup timers for WiFi and MQTT
@@ -141,7 +149,6 @@ void loop() {
         P1_data.publish();
         // Ready for next request    
         currentState = State::IDLE;
-        digitalWrite(STATE_LED, LOW); // veranderen naar RGB
         // reset timer
         startMillis = currentMillis;
         break;
@@ -151,16 +158,16 @@ void loop() {
 
 // Enable the meter sending
 void enable_meter(void) {
-  digitalWrite(STATE_LED, LOW); // Veranderen naar RGB
   SerialDebug.println("Enabling meter");
   digitalWrite(REQUEST_PIN, HIGH);
+  dataLed.color(EnableMeterColor);
   currentState = State::READING_DATAGRAM;
 }
 
 // Disable the meter sending
 void disable_meter(void) {
-  digitalWrite(STATE_LED, HIGH); // veranderen naar RGB
   SerialDebug.println("We have a DATAGRAM ready for processing");
   digitalWrite(REQUEST_PIN, LOW);
+  dataLed.color(DisableMeterColor);
 }
 

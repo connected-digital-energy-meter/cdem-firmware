@@ -42,10 +42,16 @@
 #define METER_BAUDRATE 115200
 
 // Set DataRequest pin
-const int STATE_LED = 13;
 const int REQUEST_PIN = 14;
-const int WIFI_LED = 12;  // Veranderen naar RGB
-const int MQTT_LED = 11;  // Veranderen naar RGB
+
+// RGB led pins
+#define DATA_LED_R 5    // SCK
+#define DATA_LED_G 18   // MOSI
+//#define DATA_LED_B 19   // MISO
+#define DATA_LED_B 13
+#define COMM_LED_R 27
+#define COMM_LED_G 32
+#define COMM_LED_B 33
 
 // Define a serial for debugging and for reading the meter
 #define SerialDebug Serial

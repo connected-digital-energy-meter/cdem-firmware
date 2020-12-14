@@ -1,14 +1,15 @@
 #pragma once
-#include <Arduino.h>
+
+// #include <Arduino.h>
 #include "datagram.h"
 
 namespace SmartMeter {
   class Decoder {
       public:
-        Datagram decode(char* buffer, size_t bufferlength);
+        static Datagram decode(char* buffer, size_t bufferlength);
 
       private:
-        double ParseDataValue(char* _buffer, char* key, int datablock);
+        static double ParseDataValue(char* _buffer, char* key, int datablock);
 
 
   };

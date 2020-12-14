@@ -49,7 +49,7 @@ namespace SmartMeter {
           startDetected = false;
 
           DebugLn("Checking datagram CRC");
-          if (CrcChecker::checkCRC(buffer, readPointer)) {
+          if (CrcChecker::check_crc(buffer, readPointer)) {
             DebugLn("Datagram is valid");
             return true;
           } else {

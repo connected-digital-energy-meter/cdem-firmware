@@ -1,9 +1,9 @@
-#include "crccheck.h"
+#include "crc_checker.h"
 
 namespace SmartMeter {
 
     // Gets position number in char array
-    int CRCchecker::getposition(const char* array, size_t size, char c)
+    int CrcChecker::getposition(const char* array, size_t size, char c)
     {
         const char* end = array + size;
         const char* match = std::find(array, end, c);
@@ -11,7 +11,7 @@ namespace SmartMeter {
     } 
 
     // Checks the CRC for the datagram
-    bool CRCchecker::checkCRC(char* buffer, size_t bufferlength){
+    bool CrcChecker::checkCRC(char* buffer, size_t bufferlength){
         // Find the start of the datagram
         int begin = getposition(buffer, bufferlength, '/');
                 

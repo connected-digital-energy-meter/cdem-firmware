@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 namespace SmartMeter {
-  class CRCchecker {
+  class CrcChecker {
       public:
         static bool checkCRC(char* buffer, size_t bufferlength);
       private:

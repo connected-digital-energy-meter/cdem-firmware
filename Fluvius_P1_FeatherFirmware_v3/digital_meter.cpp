@@ -1,5 +1,5 @@
 #include "digital_meter.h"
-#include "crccheck.h"
+#include "crc_checker.h"
 
 namespace SmartMeter {
 
@@ -49,7 +49,7 @@ namespace SmartMeter {
           startDetected = false;
 
           DebugLn("Checking datagram CRC");
-          if (CRCchecker::checkCRC(buffer, readPointer)) {
+          if (CrcChecker::checkCRC(buffer, readPointer)) {
             DebugLn("Datagram is valid");
             return true;
           } else {

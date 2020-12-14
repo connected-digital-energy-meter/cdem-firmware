@@ -18,6 +18,7 @@
 #include "datagram.h"
 #include "digital_meter.h"
 #include "decoder.h"
+#include "mqtt.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;
@@ -163,7 +164,7 @@ void loop() {
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:
-        SmartMeter::MqttService::publish(datagram);
+        SmartMeter::MqttService::publish(&datagram,&mqttClient);
         SerialDebug.println("Datagram published");
         // Ready for next request    
         currentState = State::IDLE;

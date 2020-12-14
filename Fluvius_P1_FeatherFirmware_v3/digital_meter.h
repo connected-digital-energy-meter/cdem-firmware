@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
+#include "rgb_led.h"
+#include "variables_and_classes.h"
 
 namespace SmartMeter {
 

@@ -9,6 +9,7 @@
 
 #include "datagram.h"
 #include "decoder.h"
+#include <AsyncMqttClient.h>
 
 // WIFI credentials
 #define WIFI_SSID "IOTHOTSPOT"          // Via webpage

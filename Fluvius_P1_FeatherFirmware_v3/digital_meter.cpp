@@ -1,5 +1,6 @@
 #include "digital_meter.h"
 #include "crc_checker.h"
+#include "rgb_led.h"
 
 namespace SmartMeter {
 

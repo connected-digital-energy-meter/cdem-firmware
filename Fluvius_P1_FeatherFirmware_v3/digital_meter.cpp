@@ -28,7 +28,7 @@ namespace SmartMeter {
   bool DigitalMeter::read_datagram(char * buffer, size_t bufferLength) {
     if (serial->available() > 0) {
             
-      // get next byte for the P1 port
+      // Get next byte for the P1 port
       char incomingByte = serial->read();
             
       // Look for the start of the datagram
@@ -41,13 +41,11 @@ namespace SmartMeter {
       // Ignore all data on serial port if start was not detected
       if (startDetected) {
         buffer[readPointer++] = incomingByte;
-
         Debug(incomingByte);
 
         // Look for the end of the datagram
         if (incomingByte == '\n' && buffer[readPointer-7] == '!') {
           DebugLn("Read in full datagram");
-          readPointer = 0;
           startDetected = false;
 
           DebugLn("Checking datagram CRC");

@@ -17,6 +17,7 @@
 #include "variables_and_classes.h"
 #include "datagram.h"
 #include "digital_meter.h"
+#include "decoder.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;
@@ -128,6 +129,9 @@ void setup() {
   startMillis = millis();    
 }
 
+// char datagramBuffer[1024] = {0};
+SmartMeter::Datagram datagram;
+
 void loop() {
 
   // Current time for period
@@ -147,14 +151,17 @@ void loop() {
           currentState = State::DATAGRAM_READY;
         }
         break;
-      // Stop requesting data & CRC check  
+      // Stop requesting data
       case State::DATAGRAM_READY:        
         disable_meter();
-        P1_data.crc_check(currentState);        
+        currentState = State::PROCESSING_DATA_GRAM;
         break;
       // Decode data  
       case State::PROCESSING_DATA_GRAM:
-        P1_data.decode(currentState);        
+        datagram = SmartMeter::Decoder::decode(P1_data.datagramBuffer, 1024);
+        SerialDebug.println("Decoded datagram:");
+        SerialDebug.println(datagram.to_string());
+        currentState = State::DATAGRAM_DECODED;
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:

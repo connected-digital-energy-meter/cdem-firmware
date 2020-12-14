@@ -124,17 +124,6 @@ class datagram
         datagramBuffer[1024] = { 0 };
     }
 
-    //Decode the datagram to value for each OBIS reference
-    void decode(State &theState){
-        
-        SmartMeter::Datagram test = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
-
-        SerialDebug.println("Decoded datagram:");
-        SerialDebug.println(test.to_string());
-        // End of decoding
-        theState = State::DATAGRAM_DECODED;
-    }
-
     void publish(){
         uint16_t packetIdPub1 = mqttClient.publish(MQTT_C_L_TARIF, 1, true, String(CONSUMPTION_LOW_TARIF).c_str());                            
         uint16_t packetIdPub2 = mqttClient.publish(MQTT_C_H_TARIF, 1, true, String(CONSUMPTION_HIGH_TARIF).c_str());                            

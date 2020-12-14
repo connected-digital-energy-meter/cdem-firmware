@@ -13,7 +13,7 @@ namespace SmartMeter {
     init_channel(_pinGreen, _firstChannel+1);
     init_channel(_pinBlue, _firstChannel+2);
 
-    color(Color::BLACK());
+    clear();
   }
 
   void RgbLed::init_channel(int pin, int channel) {

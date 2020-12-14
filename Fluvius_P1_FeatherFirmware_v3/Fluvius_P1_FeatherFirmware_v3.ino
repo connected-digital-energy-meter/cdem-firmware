@@ -24,16 +24,13 @@ using namespace SmartMeter;
 
 // Setup the RGB led's on the PCB
 RgbLed commLed(COMM_LED_R, COMM_LED_G, COMM_LED_B, 1);
-RgbLed dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4);
 
 // Predefine some colors
 Color NoWifiColor(Color::RED().dim(20));
 Color NoMqttColor(Color::ORANGE().dim(20));
 Color ComOkColor(Color::GREEN().dim(20));
-Color EnableMeterColor(Color::BLUE().dim(20));
-Color DisableMeterColor(Color::BLACK());
 
-// Waarvoor dient dit ?
+// Initiate variable of Digitalmeter.
 DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 
 // Connect to WiFi
@@ -95,11 +92,10 @@ void setup() {
 
   // Initiate the led's on the pcb
   commLed.on();
-  dataLed.on();
   commLed.color(NoWifiColor);
 
   // Stop requesting data from the meter
-  disable_meter();
+  meter.disable();
 
   // Setup timers for WiFi and MQTT
   mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
@@ -129,7 +125,8 @@ void setup() {
   startMillis = millis();    
 }
 
-// char datagramBuffer[1024] = {0};
+// Initialise temporary datagrambuffer and datagram 
+char datagramBuffer[1024] = {0};
 SmartMeter::Datagram datagram;
 
 void loop() {
@@ -143,29 +140,31 @@ void loop() {
     switch (currentState){
       // Request data
       case State::IDLE:
-        enable_meter();    
+        meter.enable();
+        currentState = State::READING_DATAGRAM;
         break;
       // Read data
       case State::READING_DATAGRAM:
-        if (meter.read_datagram(P1_data.datagramBuffer, 1024)) {
+        if (meter.read_datagram(datagramBuffer, 1024)) {
           currentState = State::DATAGRAM_READY;
         }
         break;
       // Stop requesting data
       case State::DATAGRAM_READY:        
-        disable_meter();
+        meter.disable();
         currentState = State::PROCESSING_DATA_GRAM;
         break;
       // Decode data  
       case State::PROCESSING_DATA_GRAM:
-        datagram = SmartMeter::Decoder::decode(P1_data.datagramBuffer, 1024);
+        datagram = SmartMeter::Decoder::decode(datagramBuffer, 1024);
         SerialDebug.println("Decoded datagram:");
         SerialDebug.println(datagram.to_string());
         currentState = State::DATAGRAM_DECODED;
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:
-        P1_data.publish();
+        SmartMeter::MqttService::publish(datagram);
+        SerialDebug.println("Datagram published");
         // Ready for next request    
         currentState = State::IDLE;
         // reset timer
@@ -175,20 +174,7 @@ void loop() {
   }
 }
 
-// Enable the meter sending
-void enable_meter(void) {
-  SerialDebug.println("Enabling meter");
-  // digitalWrite(REQUEST_PIN, HIGH);
-  meter.enable();
-  dataLed.color(EnableMeterColor);
-  currentState = State::READING_DATAGRAM;
-}
 
-// Disable the meter sending
-void disable_meter(void) {
-  SerialDebug.println("We have a DATAGRAM ready for processing");
-  meter.disable();
-  // digitalWrite(REQUEST_PIN, LOW);
-  dataLed.color(DisableMeterColor);
-}
+
+
 

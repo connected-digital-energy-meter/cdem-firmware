@@ -127,8 +127,10 @@ class datagram
     //Decode the datagram to value for each OBIS reference
     void decode(State &theState){
         
-        Datagram test = SmartMeter::Decode::decode(datagramBuffer,sizeof(datagramBuffer));
-        
+        SmartMeter::Datagram test = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
+
+        SerialDebug.println("Decoded datagram:");
+        SerialDebug.println(test.to_string());
         // End of decoding
         theState = State::DATAGRAM_DECODED;
     }

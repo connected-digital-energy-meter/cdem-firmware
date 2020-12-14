@@ -7,7 +7,6 @@
  *
 */
 
-#include "crccheck.h"
 #include "datagram.h"
 #include "decoder.h"
 
@@ -123,19 +122,6 @@ class datagram
     // constructor
     datagram(){
         datagramBuffer[1024] = { 0 };
-    }
-
-    // Do a CRC16-IBM check for validation of the received datagram
-    void crc_check(State &theState){
-        
-        if(SmartMeter::CRCchecker::checkCRC(datagramBuffer,sizeof(datagramBuffer))){
-            theState = State::PROCESSING_DATA_GRAM; 
-        } else {
-            SerialDebug.println("CRC16 check failed");
-            theState = State::IDLE;
-            datagramBuffer[1024]={0};
-        }
-        
     }
 
     //Decode the datagram to value for each OBIS reference

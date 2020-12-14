@@ -1,4 +1,5 @@
 #include "digital_meter.h"
+#include "crccheck.h"
 
 namespace SmartMeter {
 
@@ -48,7 +49,16 @@ namespace SmartMeter {
           DebugLn("Read in full datagram");
           readPointer = 0;
           startDetected = false;
-          return true;
+
+          DebugLn("Checking datagram CRC");
+          if (CRCchecker::checkCRC(buffer, readPointer)) {
+            DebugLn("Datagram is valid");
+            return true;
+          } else {
+            DebugLn("Datagram is invalid - CRC Check Failed");
+            return false;
+          }
+
         } else if (readPointer >= bufferLength) {    // End of datagram not found
           DebugLn("Invalid Datagram > No end detected");
           clear_buffer(buffer, bufferLength);

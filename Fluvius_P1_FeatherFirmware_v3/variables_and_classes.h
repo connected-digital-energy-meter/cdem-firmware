@@ -8,6 +8,8 @@
 */
 
 #include "crccheck.h"
+#include "datagram.h"
+#include "decoder.h"
 
 // WIFI credentials
 #define WIFI_SSID "IOTHOTSPOT"          // Via webpage
@@ -136,146 +138,11 @@ class datagram
         
     }
 
-    // Parse value of single OBIS reference
-    double ParseDataValue(char* key, int datablock)
-    {
-        // look for the OBIS reference
-        char* position = strstr(datagramBuffer, key);
-
-        // if OBIS reference found
-        if (position)
-        {
-            // look for the start position of the value for this OBIS reference
-            char* start = position + strlen(key)+1;
-
-            // if there are two value blocks then look for the start of the second one
-            if(datablock==2){
-            char* start = strchr(start,'(')+1;  
-            }
-
-            // look for the end position of the value for this OBIS reference
-            char* end = strchr(start,'*')-1;
-
-            // get the value of the OBIS reference
-            char buffer[64] = {0};
-            strncpy(buffer,start,end-start+1);
-
-            // return the value
-            return atof(buffer);
-        } else {
-        // return invalid if OBIS reference not found
-        return -1;
-        }
-    }
-
     //Decode the datagram to value for each OBIS reference
     void decode(State &theState){
         
-        // 1-0:1.8.2 = OBIS reference for electricity delivered to client in low tariff
-        CONSUMPTION_LOW_TARIF = ParseDataValue("1-0:1.8.2",1);
-        Serial.print("CONSUMPTION_LOW_TARIF = ");
-        Serial.println(CONSUMPTION_LOW_TARIF);
-
-        // 1-0:1.8.1 = OBIS reference for electricity delivered to client in high tariff
-        CONSUMPTION_HIGH_TARIF = ParseDataValue("1-0:1.8.1",1);
-        Serial.print("CONSUMPTION_HIGH_TARIF = ");
-        Serial.println(CONSUMPTION_HIGH_TARIF);
-
-        // 1-0:2.8.2 = OBIS reference for electricity delivered by client in low tariff
-        PRODUCTION_LOW_TARIF = ParseDataValue("1-0:2.8.2",1);
-        Serial.print("PRODUCTION_LOW_TARIF =");
-        Serial.println(PRODUCTION_LOW_TARIF);
-
-        // 1-0:2.8.1 = OBIS reference for electricity delivered by client in high tariff
-        PRODUCTION_HIGH_TARIF = ParseDataValue("1-0:2.8.1",1);
-        Serial.print("PRODUCTION_HIGH_TARIF =");
-        Serial.println(PRODUCTION_HIGH_TARIF);
-
-        // 1-0:1.7.0 = OBIS reference actual total power delivered to client
-        TOTAL_POWER_CONSUMPTION = ParseDataValue("1-0:1.7.0",1);
-        Serial.print("TOTAL_POWER_CONSUMPTION = ");
-        Serial.println(TOTAL_POWER_CONSUMPTION);
-
-        // 1-0:2.7.0 = OBIS reference actual total power delivered by client
-        TOTAL_POWER_PRODUCTION = ParseDataValue("1-0:2.7.0",1);
-        Serial.print("TOTAL_POWER_PRODUCTION = ");
-        Serial.println(TOTAL_POWER_PRODUCTION);
-
-        // 0-0:96.14.0 = OBIS reference actual tariff
-        ACTUAL_TARIF = ParseDataValue("0-0:96.14.0",1);
-        Serial.print("ACTUAL_TARIF = ");
-        Serial.println(ACTUAL_TARIF);
-
-        // 1-0:32.7.0 = OBIS reference actual voltage L1
-        ACTUAL_VOLTAGE_L1 = ParseDataValue("1-0:32.7.0",1);
-        Serial.print("ACTUAL_VOLTAGE_L1 =");
-        Serial.println(ACTUAL_VOLTAGE_L1);
-
-        // 1-0:52.7.0 = OBIS reference actual voltage L2
-        ACTUAL_VOLTAGE_L2 = ParseDataValue("1-0:52.7.0",1);
-        Serial.print("ACTUAL_VOLTAGE_L2 =");
-        Serial.println(ACTUAL_VOLTAGE_L2);
-
-        // 1-0:72.7.0 = OBIS reference actual voltage L3
-        ACTUAL_VOLTAGE_L3 = ParseDataValue("1-0:72.7.0",1);
-        Serial.print("ACTUAL_VOLTAGE_L3 =");
-        Serial.println(ACTUAL_VOLTAGE_L3);
-
-        // 1-0:31.7.0 = OBIS reference actual current L1
-        ACTUAL_CURRENT_L1 = ParseDataValue("1-0:31.7.0",1);
-        Serial.print("ACTUAL_CURRENT_L1 =");
-        Serial.println(ACTUAL_CURRENT_L1);
-
-        // 1-0:51.7.0 = OBIS reference actual current L2
-        ACTUAL_CURRENT_L2 = ParseDataValue("1-0:51.7.0",1);
-        Serial.print("ACTUAL_CURRENT_L2 =");
-        Serial.println(ACTUAL_CURRENT_L2);
+        Datagram test = SmartMeter::Decode::decode(datagramBuffer,sizeof(datagramBuffer));
         
-        // 1-0:71.7.0 = OBIS reference actual current L3
-        ACTUAL_CURRENT_L3 = ParseDataValue("1-0:71.7.0",1);
-        Serial.print("ACTUAL_CURRENT_L3 =");
-        Serial.println(ACTUAL_CURRENT_L3);
-
-        // 1-0:22.7.0 = OBIS reference actual power comsumption L1
-        L1_POWER_CONSUMPTION = ParseDataValue("1-0:22.7.0",1);
-        Serial.print("L1_POWER_COMSUMPTION = ");
-        Serial.println(L1_POWER_CONSUMPTION);
-
-        // 1-0:42.7.0 = OBIS reference actual power comsumption L2
-        L2_POWER_CONSUMPTION = ParseDataValue("1-0:42.7.0",1);
-        Serial.print("L2_POWER_COMSUMPTION = ");
-        Serial.println(L2_POWER_CONSUMPTION);
-
-        // 1-0:62.7.0 = OBIS reference actual power comsumption L3
-        L3_POWER_CONSUMPTION = ParseDataValue("1-0:62.7.0",1);
-        Serial.print("L3_POWER_COMSUMPTION = ");
-        Serial.println(L3_POWER_CONSUMPTION);
-  
-        // 1-0:21.7.0 = OBIS reference actual power production L1
-        L1_POWER_PRODUCTION = ParseDataValue("1-0:21.7.0",1);
-        Serial.print("L1_POWER_PRODUCTION = ");
-        Serial.println(L1_POWER_PRODUCTION);
-
-        // 1-0:41.7.0 = OBIS reference actual power production L2
-        L2_POWER_PRODUCTION = ParseDataValue("1-0:41.7.0",1);
-        Serial.print("L2_POWER_PRODUCTION = ");
-        Serial.println(L2_POWER_PRODUCTION);
-        
-        // 1-0:61.7.0 = OBIS reference actual power production L3
-        L3_POWER_PRODUCTION = ParseDataValue("1-0:61.7.0",1);
-        Serial.print("L3_POWER_PRODUCTION = ");
-        Serial.println(L3_POWER_PRODUCTION);
-        
-        // 0-1:24.2.3 = OBIS reference gas delivered to client with temperature correction , 0-n where the n is the device number, possibly you need to change this number for your configuration
-        GAS_METER_M3 = ParseDataValue("0-1:24.2.3",2);
-        Serial.print("GAS_METER_M3 = ");
-        Serial.println(GAS_METER_M3);
-        
-        // 0-2:24.2.1 = OBIS reference water delivered to client, 0-n where the n is the device number, possibly you need to change this number for your configuration
-        WATER_METER_M3 = ParseDataValue("0-2:24.2.1",2);
-        Serial.print("WATER_METER_M3 =");
-        Serial.println(WATER_METER_M3); 
-
         // End of decoding
         theState = State::DATAGRAM_DECODED;
     }

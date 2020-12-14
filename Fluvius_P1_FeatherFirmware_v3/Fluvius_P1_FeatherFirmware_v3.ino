@@ -18,18 +18,21 @@
 #include "datagram.h"
 #include "digital_meter.h"
 
+// Using the namespace SmartMeter
 using namespace SmartMeter;
 
+// Setup the RGB led's on the PCB
 RgbLed commLed(COMM_LED_R, COMM_LED_G, COMM_LED_B, 1);
 RgbLed dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4);
 
+// Predefine some colors
 Color NoWifiColor(Color::RED().dim(20));
 Color NoMqttColor(Color::ORANGE().dim(20));
 Color ComOkColor(Color::GREEN().dim(20));
 Color EnableMeterColor(Color::BLUE().dim(20));
 Color DisableMeterColor(Color::BLACK());
 
-Datagram datagramtest;
+// Waarvoor dient dit ?
 DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 
 // Connect to WiFi
@@ -86,13 +89,15 @@ void setup() {
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
   SerialMeter.begin(METER_BAUDRATE);
 
-  // Pin Setup
+  // Pin Setup for request data
   pinMode(REQUEST_PIN, OUTPUT);
+
+  // Initiate the led's on the pcb
   commLed.on();
   dataLed.on();
   commLed.color(NoWifiColor);
 
-  // Clear outputs
+  // Stop requesting data from the meter
   disable_meter();
 
   // Setup timers for WiFi and MQTT
@@ -120,10 +125,7 @@ void setup() {
   SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
 
   // Start time for period
-  startMillis = millis();
-  
-  datagramtest.consumption_low_tarif(12.4);
-  SerialDebug.println(datagramtest.to_string());
+  startMillis = millis();    
 }
 
 void loop() {

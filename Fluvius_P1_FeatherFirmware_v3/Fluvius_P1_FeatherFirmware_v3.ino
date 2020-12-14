@@ -10,7 +10,6 @@
 // Include general libraries
 #include <cstring>
 #include <WiFi.h>
-#include <AsyncMqttClient.h>
 
 // Include custom libraries
 #include "rgb_led.h"
@@ -18,7 +17,7 @@
 #include "datagram.h"
 #include "digital_meter.h"
 #include "decoder.h"
-#include "mqtt.h"
+#include "src/datagram_publisher.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;
@@ -33,6 +32,7 @@ Color ComOkColor(Color::GREEN().dim(20));
 
 // Initiate variable of Digitalmeter.
 DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
+DatagramPublisher publisher(MQTT_HOST, MQTT_PORT, &SerialDebug);
 
 // Connect to WiFi
 void connectToWifi() {
@@ -43,7 +43,7 @@ void connectToWifi() {
 // Connect to MQTT broker
 void connectToMqtt() {
   Serial.println("Connecting to MQTT...");
-  mqttClient.connect();
+  publisher.connect();
 }
 
 // Handle WiFi events
@@ -58,28 +58,10 @@ void WiFiEvent(WiFiEvent_t event) {
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       Serial.println("WiFi lost connection");
-      xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
       xTimerStart(wifiReconnectTimer, 0);
       commLed.color(NoWifiColor);
       break;
   }
-}
-
-// On succesfull MQTT connection
-void onMqttConnect(bool sessionPresent) {
-  Serial.println("Connected to MQTT.");
-  Serial.print("Session present: ");
-  Serial.println(sessionPresent);
-  commLed.color(ComOkColor);
-}
-
-// On disconection from MQTT
-void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println("Disconnected from MQTT.");
-  if (WiFi.isConnected()) {
-    xTimerStart(mqttReconnectTimer, 0);
-  }
-  commLed.color(NoMqttColor);
 }
 
 void setup() {
@@ -99,21 +81,10 @@ void setup() {
   meter.disable();
 
   // Setup timers for WiFi and MQTT
-  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
   // Setup eventhandler WiFi
   WiFi.onEvent(WiFiEvent);
-
-  // Setup Eventhandlers MQTT
-  mqttClient.onConnect(onMqttConnect);
-  mqttClient.onDisconnect(onMqttDisconnect);
-  //mqttClient.onPublish(onMqttPublish);
-  
-  // Setup MQTT serverinfo
-  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-  // If your broker requires authentication (username and password), set them below
-  //mqttClient.setCredentials("REPlACE_WITH_YOUR_USER", "REPLACE_WITH_YOUR_PASSWORD");
 
   // Make Wifi Connection
   connectToWifi();
@@ -123,12 +94,14 @@ void setup() {
   SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
 
   // Start time for period
-  startMillis = millis();    
+  startMillis = millis();
 }
 
 // Initialise temporary datagrambuffer and datagram 
 char datagramBuffer[1024] = {0};
 SmartMeter::Datagram datagram;
+
+bool done = false;
 
 void loop() {
 
@@ -164,7 +137,8 @@ void loop() {
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:
-        SmartMeter::MqttService::publish(&datagram,&mqttClient);
+        // SmartMeter::MqttService::publish(&datagram,&mqttClient);
+        publisher.publish(&datagram);
         SerialDebug.println("Datagram published");
         // Ready for next request    
         currentState = State::IDLE;

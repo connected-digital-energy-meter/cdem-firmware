@@ -11,13 +11,13 @@ namespace SmartMeter {
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
-    dataLed.on();
+    // dataLed.on();
   }
 
   void DigitalMeter::enable(void) {
     DebugLn("Enabling the digital meter data request");
     digitalWrite(requestPin, HIGH);
-    dataLed.color(EnableMeterColor);
+    // dataLed.color(EnableMeterColor);
     readPointer = 0;
     startDetected = false;
   }
@@ -25,7 +25,7 @@ namespace SmartMeter {
   void DigitalMeter::disable(void) {
     DebugLn("Disabling the digital meter data request");
     digitalWrite(requestPin, LOW);
-    dataLed.color(DisableMeterColor);
+    // dataLed.color(DisableMeterColor);
   }
 
   // Read a new datagram from the P1 port

@@ -1,5 +1,4 @@
 #include "decoder.h"
-#include "datagram.h"
 
 namespace SmartMeter {
 

@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include <AsyncMqttClient.h>
-#include "../datagram.h"
+#include "../digital_meter/datagram.h"
 
 namespace SmartMeter {
 

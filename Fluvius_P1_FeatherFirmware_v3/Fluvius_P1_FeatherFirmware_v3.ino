@@ -12,12 +12,12 @@
 #include <WiFi.h>
 
 // Include custom libraries
-#include "rgb_led.h"
+#include "src/rgb/rgb_led.h"
 #include "variables_and_classes.h"
-#include "datagram.h"
-#include "digital_meter.h"
-#include "decoder.h"
-#include "src/datagram_publisher.h"
+#include "src/digital_meter/datagram.h"
+#include "src/digital_meter/digital_meter.h"
+#include "src/digital_meter/decoder.h"
+#include "src/mqtt/datagram_publisher.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;

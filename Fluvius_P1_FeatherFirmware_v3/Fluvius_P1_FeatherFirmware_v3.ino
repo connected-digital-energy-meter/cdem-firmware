@@ -19,6 +19,8 @@
 #include "src/digital_meter/digital_meter.h"
 #include "src/digital_meter/decoder.h"
 #include "src/mqtt/datagram_publisher.h"
+#include "src/config/config_serializer.h"
+#include "src/config/config_manager.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;
@@ -34,6 +36,7 @@ Color ComOkColor(Color::GREEN().dim(20));
 // Initiate variable of Digitalmeter.
 DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 DatagramPublisher publisher(MQTT_HOST, MQTT_PORT, &SerialDebug);
+ConfigManager configManager;
 
 // Connect to WiFi
 void connectToWifi() {
@@ -93,6 +96,24 @@ void setup() {
   // Wait until ESP is ready to receive info
   while ((!SerialDebug) && (millis() < 10000)) { }
   SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
+
+  // FOR SOME REASON ITS NOT WORKING WITH REST OF CODE :(
+  // // Loading config should fail first time
+  // delay(5000);
+  // SerialDebug.println("Loading configuration ...");
+
+  // bool ok = configManager.load_configuration();
+  // SerialDebug.print("Did config load? ");
+  // SerialDebug.println(ok);
+
+  // if (!ok) {
+  //   ok = configManager.save_configuration();
+  //   SerialDebug.print("Did config save? ");
+  //   SerialDebug.println(ok);
+  // }
+
+  // SerialDebug.println("Current Configuration");
+  // SerialDebug.println(configManager.current_config()->to_string());
 
   // Start time for period
   startMillis = millis();

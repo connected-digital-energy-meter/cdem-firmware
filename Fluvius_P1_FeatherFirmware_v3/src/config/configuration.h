@@ -22,6 +22,9 @@ namespace SmartMeter {
       void mqtt_port(int port);
       int mqtt_port(void);
 
+    public:
+      String to_string(void);
+
     private:
       String _wifiSSID;
       String _wifiPassword;

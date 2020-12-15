@@ -26,7 +26,20 @@ namespace SmartMeter {
   }
 
   size_t ConfigSerializer::deserialize(char * buffer, size_t size, Configuration * config) {
-    return -1;
+    char * pBuffer = buffer + 2;  // Skip first 2 bytes (length)
+
+    config->wifi_ssid(String(pBuffer));
+    pBuffer += config->wifi_ssid().length() + 1;
+
+    config->wifi_password(String(pBuffer));
+    pBuffer += config->wifi_password().length() + 1;
+
+    config->mqtt_broker(String(pBuffer));
+    pBuffer += config->mqtt_broker().length() + 1;
+
+    config->mqtt_port((*pBuffer++ << 8) + *pBuffer++);
+
+    return pBuffer-buffer;
   }
 
   size_t ConfigSerializer::serialize_string(char * buffer, String value) {

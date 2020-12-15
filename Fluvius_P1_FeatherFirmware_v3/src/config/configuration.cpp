@@ -41,4 +41,13 @@ namespace SmartMeter {
     return _mqttPort;
   }
 
+  String Configuration::to_string(void) {
+    String output = "";
+    output += "SSID: " + _wifiSSID + "\n";
+    output += "Password: " + _wifiPassword + "\n";
+    output += "Broker: " + _mqttBroker + "\n";
+    output += "Port: " + String(_mqttPort);
+    return output;
+  }
+
 };

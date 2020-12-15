@@ -12,6 +12,7 @@
 #include <WiFi.h>
 
 // Include custom libraries
+#include "hardware.h"
 #include "src/rgb/rgb_led.h"
 #include "variables_and_classes.h"
 #include "src/digital_meter/datagram.h"

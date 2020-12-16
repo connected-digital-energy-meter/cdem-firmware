@@ -7,9 +7,6 @@ namespace SmartMeter {
   class ConfigManager {
 
     public:
-      ConfigManager(void);
-
-    public:
       bool load_configuration(void);
       bool save_configuration(void);
 
@@ -17,8 +14,18 @@ namespace SmartMeter {
       Configuration * current_config(void);
 
     private:
-      Configuration _currentConfig;
+      bool initialize_eeprom(void);
 
+    private:
+      void write_identifier(void);
+      uint16_t read_identifier(void);
+
+    private:
+      Configuration _currentConfig;
+      bool hasEepromBeenInitialized = false;
+
+      static const size_t SIZE = 128;
+      static const uint16_t IDENTIFIER = 0xDEBA;
   };
 
 };

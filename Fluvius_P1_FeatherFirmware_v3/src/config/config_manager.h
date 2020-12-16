@@ -9,6 +9,7 @@ namespace SmartMeter {
     public:
       bool load_configuration(void);
       bool save_configuration(void);
+      void factory_default(void);
 
     public:
       Configuration * current_config(void);

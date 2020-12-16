@@ -2,9 +2,7 @@
 
 #include "config_serializer.h"
 #include <EEPROM.h>
-
-// TODO - Factory reset should write the initial
-// default config to the EEPROM
+#include "factory_default_config.h"
 
 namespace SmartMeter {
 
@@ -49,6 +47,13 @@ namespace SmartMeter {
     }
   
     return EEPROM.commit();
+  }
+
+  void ConfigManager::factory_default(void) {
+    _currentConfig.wifi_ssid(WIFI_DEFAULT_SSID);
+    _currentConfig.wifi_password(WIFI_DEFAULT_PASSWORD);
+    _currentConfig.mqtt_broker(MQTT_DEFAULT_BROKER);
+    _currentConfig.mqtt_port(MQTT_DEFAULT_PORT);
   }
 
   Configuration * ConfigManager::current_config(void) {

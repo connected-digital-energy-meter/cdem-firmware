@@ -94,7 +94,8 @@ void setup() {
     SerialDebug.println("Loaded existing configuration");
   } else {
     SerialDebug.println("No existing configuration could be loaded");
-    SerialDebug.println("Saving default configuration");
+    SerialDebug.println("Saving factory default configuration");
+    configManager.factory_default();
     if (configManager.save_configuration()) {
       SerialDebug.println("Successfully saved configuration");
     } else {

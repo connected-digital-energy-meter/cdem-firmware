@@ -21,7 +21,22 @@ namespace SmartMeter {
 
       void mqtt_port(int port);
       int mqtt_port(void);
-
+      
+      void mqtt_topic(String topic);
+      String mqtt_topic(void);
+      
+      void static_ip(String ip);
+      String static_ip(void);
+      
+      void subnet_mask(int mask);
+      String subnet_mask(void);
+      
+      void default_gateway(String gateway);
+      String default_gateway(void);
+      
+      void read_freq(int freq);
+      int read_freq(void);
+      
     public:
       String to_string(void);
 
@@ -30,6 +45,11 @@ namespace SmartMeter {
       String _wifiPassword;
       String _mqttBroker;
       int _mqttPort;
+      String _mqtt_topic;
+      String _static_ip;
+      String _subnet_mask;
+      String _default_gateway;
+      int _read_freq;
   };
 
 };

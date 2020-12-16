@@ -54,6 +54,11 @@ namespace SmartMeter {
     _currentConfig.wifi_password(WIFI_DEFAULT_PASSWORD);
     _currentConfig.mqtt_broker(MQTT_DEFAULT_BROKER);
     _currentConfig.mqtt_port(MQTT_DEFAULT_PORT);
+    _currentConfig.mqtt_topic(MQTT_DEFAULT_TOPIC);
+    _currentConfig.static_ip(NETWORK_DEFAULT_IP);
+    _currentConfig.default_gateway(NETWORK_DEFAULT_GATEWAY);
+    _currentConfig.subnet_mask(NETWORK_DEFAULT_SUBNET);
+    _currentConfig.read_freq(METER_DEFAULT_FREQ);
   }
 
   Configuration * ConfigManager::current_config(void) {

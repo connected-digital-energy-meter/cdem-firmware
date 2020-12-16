@@ -44,8 +44,11 @@ SmartMeter::Datagram datagram;
 
 // Connect to WiFi
 void connectToWifi() {
-  Serial.println("Connecting to WiFi...");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.println("Connecting to WiFi ...");
+  WiFi.begin(
+    configManager.current_config()->wifi_ssid().c_str(),
+    configManager.current_config()->wifi_password().c_str()
+  );
 }
 
 // Connect to MQTT broker

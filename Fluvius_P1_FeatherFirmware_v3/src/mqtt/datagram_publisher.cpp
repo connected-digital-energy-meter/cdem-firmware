@@ -1,28 +1,7 @@
 #include "datagram_publisher.h"
 
 namespace SmartMeter {
-  // TODO - This should be refactored to include configurable base topic
-  #define MQTT_C_L_TARIF "sensors/smartmeter/consumption_low_tarif"
-  #define MQTT_C_H_TARIF "sensors/smartmeter/consumption_high_tarif"
-  #define MQTT_P_L_TARIF "sensors/smartmeter/production_low_tarif"
-  #define MQTT_P_H_TARIF "sensors/smartmeter/production_high_tarif"
-  #define MQTT_C_T_POWER "sensors/smartmeter/total_power_consumption"
-  #define MQTT_P_T_POWER "sensors/smartmeter/total_power_production"
-  #define MQTT_A_TARIF "sensors/smartmeter/actual_tarif"
-  #define MQTT_V_L1 "sensors/smartmeter/actual_voltage_l1"
-  #define MQTT_V_L2 "sensors/smartmeter/actual_voltage_l2"
-  #define MQTT_V_L3 "sensors/smartmeter/actual_voltage_l3"
-  #define MQTT_A_L1 "sensors/smartmeter/actual_current_l1"
-  #define MQTT_A_L2 "sensors/smartmeter/actual_current_l2"
-  #define MQTT_A_L3 "sensors/smartmeter/actual_current_l3"
-  #define MQTT_C_L1_POWER "sensors/smartmeter/l1_power_consumption"
-  #define MQTT_C_L2_POWER "sensors/smartmeter/l2_power_consumption"
-  #define MQTT_C_L3_POWER "sensors/smartmeter/l3_power_consumption"
-  #define MQTT_P_L1_POWER "sensors/smartmeter/l1_power_production"
-  #define MQTT_P_L2_POWER "sensors/smartmeter/l2_power_production"
-  #define MQTT_P_L3_POWER "sensors/smartmeter/l3_power_production"
-  #define MQTT_C_GAS "sensors/smartmeter/gas_meter_m3"
-  #define MQTT_C_WATER "sensors/smartmeter/water_meter_m3"
+  #define BASETOPIC "sensors/smartmeter/"     // TODO - Config option!
 
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
@@ -94,27 +73,12 @@ namespace SmartMeter {
   }
 
   void DatagramPublisher::publish(Datagram * datagram) {
-    mqttClient.publish(MQTT_C_L_TARIF, 1, true, String(datagram->consumption_low_tarif()).c_str());                            
-    mqttClient.publish(MQTT_C_H_TARIF, 1, true, String(datagram->consumption_high_tarif()).c_str());                            
-    mqttClient.publish(MQTT_P_L_TARIF, 1, true, String(datagram->production_low_tarif()).c_str());                            
-    mqttClient.publish(MQTT_P_H_TARIF, 1, true, String(datagram->production_high_tarif()).c_str());                            
-    mqttClient.publish(MQTT_C_T_POWER, 1, true, String(datagram->total_power_consumption()).c_str());
-    mqttClient.publish(MQTT_P_T_POWER, 1, true, String(datagram->total_power_production()).c_str());
-    mqttClient.publish(MQTT_A_TARIF, 1, true, String(datagram->actual_tarif()).c_str());
-    mqttClient.publish(MQTT_V_L1, 1, true, String(datagram->actual_voltage_l1()).c_str());
-    mqttClient.publish(MQTT_V_L2, 1, true, String(datagram->actual_voltage_l2()).c_str());
-    mqttClient.publish(MQTT_V_L3, 1, true, String(datagram->actual_voltage_l3()).c_str());
-    mqttClient.publish(MQTT_A_L1, 1, true, String(datagram->actual_current_l1()).c_str());
-    mqttClient.publish(MQTT_A_L2, 1, true, String(datagram->actual_current_l2()).c_str());
-    mqttClient.publish(MQTT_A_L3, 1, true, String(datagram->actual_current_l3()).c_str());
-    mqttClient.publish(MQTT_C_L1_POWER, 1, true, String(datagram->l1_power_consumption()).c_str());
-    mqttClient.publish(MQTT_C_L2_POWER, 1, true, String(datagram->l2_power_consumption()).c_str());
-    mqttClient.publish(MQTT_C_L3_POWER, 1, true, String(datagram->l3_power_consumption()).c_str());
-    mqttClient.publish(MQTT_P_L1_POWER, 1, true, String(datagram->l1_power_production()).c_str());
-    mqttClient.publish(MQTT_P_L2_POWER, 1, true, String(datagram->l2_power_production()).c_str());
-    mqttClient.publish(MQTT_P_L3_POWER, 1, true, String(datagram->l3_power_production()).c_str());
-    mqttClient.publish(MQTT_C_GAS, 1, true, String(datagram->gas_meter_m3()).c_str());                            
-    mqttClient.publish(MQTT_C_WATER, 1, true, String(datagram->water_meter_m3()).c_str());
+    std::vector<String> keys = datagram->keys();
+    for (String key : keys) {
+      String topic = BASETOPIC + key;
+      String data = String(datagram->get(key));
+      mqttClient.publish(topic.c_str(), 1, true, data.c_str());
+    }
   }
 
 };

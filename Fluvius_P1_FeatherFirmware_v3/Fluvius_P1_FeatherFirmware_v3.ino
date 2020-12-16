@@ -38,10 +38,17 @@ DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 DatagramPublisher publisher(MQTT_HOST, MQTT_PORT, &SerialDebug);
 ConfigManager configManager;
 
+// Initialise temporary datagrambuffer and datagram 
+char datagramBuffer[1024] = {0};
+SmartMeter::Datagram datagram;
+
 // Connect to WiFi
 void connectToWifi() {
-  Serial.println("Connecting to WiFi...");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.println("Connecting to WiFi ...");
+  WiFi.begin(
+    configManager.current_config()->wifi_ssid().c_str(),
+    configManager.current_config()->wifi_password().c_str()
+  );
 }
 
 // Connect to MQTT broker
@@ -69,10 +76,11 @@ void WiFiEvent(WiFiEvent_t event) {
 }
 
 void setup() {
-  
-  // Set the bautrate for both serial connections
+  // Set the baudrate for both serial connections
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
   SerialMeter.begin(METER_BAUDRATE);
+
+  SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
 
   // Pin Setup for request data
   pinMode(REQUEST_PIN, OUTPUT);
@@ -84,6 +92,26 @@ void setup() {
   // Stop requesting data from the meter
   meter.disable();
 
+  SerialDebug.println("Loading configuration ...");
+  if (configManager.load_configuration()) {
+    SerialDebug.println("Loaded existing configuration");
+  } else {
+    SerialDebug.println("No existing configuration could be loaded");
+    SerialDebug.println("Saving factory default configuration");
+    configManager.factory_default();
+    if (configManager.save_configuration()) {
+      SerialDebug.println("Successfully saved configuration");
+    } else {
+      SerialDebug.println("Something went wrong. Could not save configuration");
+    }
+  }
+
+  SerialDebug.println("Current Configuration");
+  SerialDebug.println(configManager.current_config()->to_string());
+
+  delay(5000);
+  SerialDebug.println("Continuing boot procedure ...");
+
   // Setup timers for WiFi and MQTT
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
@@ -93,37 +121,9 @@ void setup() {
   // Make Wifi Connection
   connectToWifi();
 
-  // Wait until ESP is ready to receive info
-  while ((!SerialDebug) && (millis() < 10000)) { }
-  SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
-
-  // FOR SOME REASON ITS NOT WORKING WITH REST OF CODE :(
-  // // Loading config should fail first time
-  // delay(5000);
-  // SerialDebug.println("Loading configuration ...");
-
-  // bool ok = configManager.load_configuration();
-  // SerialDebug.print("Did config load? ");
-  // SerialDebug.println(ok);
-
-  // if (!ok) {
-  //   ok = configManager.save_configuration();
-  //   SerialDebug.print("Did config save? ");
-  //   SerialDebug.println(ok);
-  // }
-
-  // SerialDebug.println("Current Configuration");
-  // SerialDebug.println(configManager.current_config()->to_string());
-
   // Start time for period
   startMillis = millis();
 }
-
-// Initialise temporary datagrambuffer and datagram 
-char datagramBuffer[1024] = {0};
-SmartMeter::Datagram datagram;
-
-bool done = false;
 
 void loop() {
 
@@ -141,7 +141,7 @@ void loop() {
         break;
       // Read data
       case State::READING_DATAGRAM:
-        if (meter.read_datagram(datagramBuffer, 1024)) {
+        if (meter.read_datagram(datagramBuffer, sizeof(datagramBuffer))) {
           currentState = State::DATAGRAM_READY;
         }
         break;
@@ -152,14 +152,13 @@ void loop() {
         break;
       // Decode data  
       case State::PROCESSING_DATA_GRAM:
-        datagram = SmartMeter::Decoder::decode(datagramBuffer, 1024);
+        datagram = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
         SerialDebug.println("Decoded datagram:");
         SerialDebug.println(datagram.to_string());
         currentState = State::DATAGRAM_DECODED;
         break;
       // Publish data to MQTT  
       case State::DATAGRAM_DECODED:
-        // SmartMeter::MqttService::publish(&datagram,&mqttClient);
         publisher.publish(&datagram);
         SerialDebug.println("Datagram published");
         // Ready for next request    

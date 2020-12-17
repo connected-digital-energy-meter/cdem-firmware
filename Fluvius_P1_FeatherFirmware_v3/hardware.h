@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Hardware settings for P1 firmware
+ *
+*/
 #pragma once
 
 // Baud rate for both hardware and software serial

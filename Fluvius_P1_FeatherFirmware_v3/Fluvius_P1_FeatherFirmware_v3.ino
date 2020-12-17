@@ -3,7 +3,7 @@
  *
  * Autor Ronny Mees & Nico De Witte
  *
- * Program to read the P1 port of a Fluvius smart meter with a Feather Huzzah32
+ * Firmware for Feather Huzzah32 to read the P1 port of a Fluvius Smart Meter
  *
 */
 
@@ -33,9 +33,8 @@ Color NoWifiColor(Color::RED().dim(20));
 Color NoMqttColor(Color::ORANGE().dim(20));
 Color ComOkColor(Color::GREEN().dim(20));
 
-// Initiate variable of Digitalmeter.
+// Initiate variable of Digitalmeter and configurationmanager.
 DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
-DatagramPublisher publisher(MQTT_HOST, MQTT_PORT, &SerialDebug);
 ConfigManager configManager;
 
 // Initialise temporary datagrambuffer and datagram 
@@ -92,6 +91,7 @@ void setup() {
   // Stop requesting data from the meter
   meter.disable();
 
+  // Loading the EEPROM or factory default configuration settings 
   SerialDebug.println("Loading configuration ...");
   if (configManager.load_configuration()) {
     SerialDebug.println("Loaded existing configuration");
@@ -112,6 +112,9 @@ void setup() {
   delay(5000);
   SerialDebug.println("Continuing boot procedure ...");
 
+  // Initiate MQTT publisher
+  DatagramPublisher publisher(configManager.current_config()->mqtt_broker().c_str(), configManager.current_config()->mqtt_port().c_str(), &SerialDebug);
+
   // Setup timers for WiFi and MQTT
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
@@ -122,7 +125,9 @@ void setup() {
   connectToWifi();
 
   // Start time for period
+  const long    period = configManager.current_config()->read_freq().c_str() ;
   startMillis = millis();
+  SerialDebug.println("Boot finished");
 }
 
 void loop() {

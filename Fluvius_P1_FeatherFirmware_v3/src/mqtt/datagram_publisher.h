@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Class to publish the P1 data to a MQTT broker
+ *
+*/
 #pragma once
 
 #include <Arduino.h>

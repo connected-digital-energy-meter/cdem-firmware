@@ -1,6 +1,6 @@
 #pragma once
 
-#include "configuration.h"
+#include "../config/configuration.h"
 
 namespace SmartMeter {
 

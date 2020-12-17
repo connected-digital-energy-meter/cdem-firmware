@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Class to read the P1 telegram 
+ *
+*/
 #pragma once
 
 #include <Arduino.h>

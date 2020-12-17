@@ -3,21 +3,21 @@
  *
  * Autor Ronny Mees & Nico De Witte
  *
- * General settings for P1 Reader program
+ * Software settings for P1 firmware
  *
 */
 #pragma once
 
-// WIFI credentials
-#define WIFI_SSID "IOTHOTSPOT"          // Via webpage
-#define WIFI_PASSWORD "GrIoT2020"       // Via webpage
+/*// WIFI credentials
+#define WIFI_SSID "IOTHOTSPOT"          // Via config, moet dus nog weg
+#define WIFI_PASSWORD "GrIoT2020"       // Via config, moet dus nog weg
 
 // Raspberri Pi Mosquitto MQTT Broker
-#define MQTT_HOST "172.17.100.3"        // Via webpage
-#define MQTT_PORT 1883
+#define MQTT_HOST "172.17.100.3"        // Via config, moet dus nog weg
+#define MQTT_PORT 1883                  // Via config, moet dus nog weg
 
 // Set for periodic measurement
-const long    period = 10000;
+const long    period = 10000;           // Via config, moet dus nog weg*/
 unsigned long startMillis;            
 unsigned long currentMillis;
 

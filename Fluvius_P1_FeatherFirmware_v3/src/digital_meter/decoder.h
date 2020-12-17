@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Class to decode the P1 telegram to data
+ *
+*/
 #pragma once
 
 #include "datagram.h"

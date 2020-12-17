@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Class to store the P1 data
+ *
+*/
 #pragma once
 
 #include <Arduino.h>

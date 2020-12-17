@@ -1,3 +1,11 @@
+/*
+ * VIVES college Research
+ *
+ * Autor Ronny Mees & Nico De Witte
+ *
+ * Class to controll the RGB led's on the PCB
+ *
+*/
 #pragma once
 
 #include "color.h"

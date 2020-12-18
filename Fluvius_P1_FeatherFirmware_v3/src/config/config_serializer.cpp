@@ -8,6 +8,12 @@ namespace SmartMeter {
       + config->wifi_password().length() + 1
       + config->mqtt_broker().length() + 1
       + sizeof(config->mqtt_port())
+      + config->mqtt_topic().length() + 1
+      + config->static_ip().length() + 1
+      + config->subnet_mask().length() + 1
+      + config->default_gateway().length() + 1
+      + sizeof(config->read_freq())
+
       + 2;  // For length at beginning
 
     if (neededSpace > size) return -1;
@@ -19,8 +25,12 @@ namespace SmartMeter {
     pBuffer += serialize_string(pBuffer, config->wifi_ssid());
     pBuffer += serialize_string(pBuffer, config->wifi_password());
     pBuffer += serialize_string(pBuffer, config->mqtt_broker());
-
     pBuffer += serialize_primitive(pBuffer, config->mqtt_port());
+    pBuffer += serialize_string(pBuffer, config->mqtt_topic());
+    pBuffer += serialize_string(pBuffer, config->static_ip());
+    pBuffer += serialize_string(pBuffer, config->subnet_mask());
+    pBuffer += serialize_string(pBuffer, config->default_gateway());
+    pBuffer += serialize_primitive(pBuffer, config->read_freq());
 
     return pBuffer-buffer;
   }
@@ -41,6 +51,22 @@ namespace SmartMeter {
     pBuffer += deserialize_primitive(pBuffer, &port);
     config->mqtt_port(port);
 
+    config->mqtt_topic(String(pBuffer));
+    pBuffer += config->mqtt_topic().length() + 1;
+
+    config->static_ip(String(pBuffer));
+    pBuffer += config->static_ip().length() + 1;
+
+    config->subnet_mask(String(pBuffer));
+    pBuffer += config->subnet_mask().length() + 1;
+
+    config->default_gateway(String(pBuffer));
+    pBuffer += config->default_gateway().length() + 1;
+
+    long readFreq = 0;
+    pBuffer += deserialize_primitive(pBuffer, &readFreq);
+    config->read_freq(readFreq);
+
     return pBuffer-buffer;
   }
 
@@ -54,7 +80,17 @@ namespace SmartMeter {
     return sizeof(value);
   }
 
+  size_t ConfigSerializer::serialize_primitive(char * buffer, long value) {
+    memcpy(buffer, (char*)(&value), sizeof(value));
+    return sizeof(value);
+  }
+
   size_t ConfigSerializer::deserialize_primitive(char * buffer, int * value) {
+    memcpy((char*)(value), buffer, sizeof(*value));
+    return sizeof(*value);
+  }
+
+  size_t ConfigSerializer::deserialize_primitive(char * buffer, long * value) {
     memcpy((char*)(value), buffer, sizeof(*value));
     return sizeof(*value);
   }

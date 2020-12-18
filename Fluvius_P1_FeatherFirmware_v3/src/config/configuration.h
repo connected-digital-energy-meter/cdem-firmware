@@ -34,8 +34,8 @@ namespace SmartMeter {
       void default_gateway(String gateway);
       String default_gateway(void);
       
-      void read_freq(int freq);
-      int read_freq(void);
+      void read_freq(long freq);
+      long read_freq(void);
       
     public:
       String to_string(void);
@@ -49,7 +49,7 @@ namespace SmartMeter {
       String _static_ip;
       String _subnet_mask;
       String _default_gateway;
-      int _read_freq;
+      long _read_freq;
   };
 
 };

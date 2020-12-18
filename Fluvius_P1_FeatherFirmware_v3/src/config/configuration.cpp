@@ -7,10 +7,10 @@ namespace SmartMeter {
     _wifiPassword = "PASSWORD";
     _mqttBroker = "BROKER";
     _mqttPort = 1883;
-    _mqtt_topc = "TOPIC";
-    _default_IP = "";
-    _subnet_mask = "";
-    _default_gateway = "";
+    _mqtt_topic = "TOPIC";
+    _static_ip = "0.0.0.0";
+    _subnet_mask = "0.0.0.0";
+    _default_gateway = "0.0.0.0";
     _read_freq = 60000;
   }
 
@@ -46,43 +46,43 @@ namespace SmartMeter {
     return _mqttPort;
   }
 
-  void mqtt_topic(String topic){
+  void Configuration::mqtt_topic(String topic){
     _mqtt_topic = topic;
   }
 
-  String mqtt_topic(void){
+  String Configuration::mqtt_topic(void){
     return _mqtt_topic;
   }
       
-  void static_ip(String ip){
+  void Configuration::static_ip(String ip){
     _static_ip = ip;
   }
       
-  String static_ip(void){
+  String Configuration::static_ip(void){
     return _static_ip;
   }
       
-  void subnet_mask(int mask){
+  void Configuration::subnet_mask(int mask){
     _subnet_mask = mask;
   }
 
-  String subnet_mask(void){
+  String Configuration::subnet_mask(void){
     return _subnet_mask;
   }
       
-  void default_gateway(String gateway){
+  void Configuration::default_gateway(String gateway){
     _default_gateway = gateway;
   }
       
-  String default_gateway(void){
+  String Configuration::default_gateway(void){
     return _default_gateway;
   }
       
-  void read_freq(int freq){
+  void Configuration::read_freq(long freq){
     _read_freq = freq;
   }
   
-  int read_freq(void){
+  long Configuration::read_freq(void){
     return _read_freq
   }
 
@@ -92,10 +92,10 @@ namespace SmartMeter {
     output += "Password: " + _wifiPassword + "\n";
     output += "Broker: " + _mqttBroker + "\n";
     output += "Port: " + String(_mqttPort);
-    output += "Topic: " + String(_mqtt_topic);
-    output += "Static IP: " + String(_static_ip);
-    output += "Subnet Mask: " + String(_subnet_mask);
-    output += "Default Gateway: " + String(_default_gateway);
+    output += "Topic: " + _mqtt_topic;
+    output += "Static IP: " + _static_ip;
+    output += "Subnet Mask: " + _subnet_mask;
+    output += "Default Gateway: " + _default_gateway;
     output += "Read frequency: " + String(_read_freq);
     return output;
   }

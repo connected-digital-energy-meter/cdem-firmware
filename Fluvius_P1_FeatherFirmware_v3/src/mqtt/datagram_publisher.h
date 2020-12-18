@@ -17,10 +17,10 @@ namespace SmartMeter {
   class DatagramPublisher {
 
     public:
-      DatagramPublisher(const char * host, uint16_t port, HardwareSerial * debugSerial=nullptr);
+      DatagramPublisher(HardwareSerial * debugSerial=nullptr);
 
     public:
-      void connect(void);
+      void connect(String host, uint16_t port);
       void disconnect(void);
 
     public:
@@ -28,6 +28,9 @@ namespace SmartMeter {
 
     private:
       void setup_callbacks(void);
+
+    private:
+      void connect(void);
 
     private:
       void on_connected(bool sessionPresent);

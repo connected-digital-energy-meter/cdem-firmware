@@ -6,9 +6,8 @@ namespace SmartMeter {
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
 
-  DatagramPublisher::DatagramPublisher(const char * host, uint16_t port, HardwareSerial * debugSerial) {
+  DatagramPublisher::DatagramPublisher(HardwareSerial * debugSerial) {
     this->debugSerial = debugSerial;
-    mqttClient.setServer(host, port);
     setup_callbacks();
 
     // Pass instance pointer as ID to timer which can only be used with function/static method callbacks
@@ -17,8 +16,12 @@ namespace SmartMeter {
       (void*)this, &DatagramPublisher::reconnect_timer_callback);
   }
 
-  void DatagramPublisher::setup_callbacks(void) {
+  void DatagramPublisher::connect(String host, uint16_t port) {
+    mqttClient.setServer(host.c_str(), port);
+    connect();
+  }
 
+  void DatagramPublisher::setup_callbacks(void) {
     // std::function<void(bool sessionPresent)> OnConnectUserCallback;
     AsyncMqttClientInternals::OnConnectUserCallback onConnected
       = std::bind(&DatagramPublisher::on_connected, this, std::placeholders::_1 );
@@ -73,6 +76,11 @@ namespace SmartMeter {
   }
 
   void DatagramPublisher::publish(Datagram * datagram) {
+    if (!_connected) {
+      DebugLn("DGP - Could not publish. Not connected to broker.");
+      return;
+    }
+
     std::vector<String> keys = datagram->keys();
     for (String key : keys) {
       String topic = BASETOPIC + key;

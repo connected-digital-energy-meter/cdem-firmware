@@ -7,7 +7,7 @@ namespace SmartMeter {
         config->wifi_ssid().length() + 1
       + config->wifi_password().length() + 1
       + config->mqtt_broker().length() + 1
-      + 2   // For mqtt port
+      + sizeof(config->mqtt_port())
       + 2;  // For length at beginning
 
     if (neededSpace > size) return -1;
@@ -19,8 +19,8 @@ namespace SmartMeter {
     pBuffer += serialize_string(pBuffer, config->wifi_ssid());
     pBuffer += serialize_string(pBuffer, config->wifi_password());
     pBuffer += serialize_string(pBuffer, config->mqtt_broker());
-    *pBuffer++ = (char)((config->mqtt_port() >> 8) & 0xFF);
-    *pBuffer++ = (char)((config->mqtt_port()) & 0xFF);
+
+    pBuffer += serialize_primitive(pBuffer, config->mqtt_port());
 
     return pBuffer-buffer;
   }
@@ -37,7 +37,9 @@ namespace SmartMeter {
     config->mqtt_broker(String(pBuffer));
     pBuffer += config->mqtt_broker().length() + 1;
 
-    config->mqtt_port((*pBuffer++ << 8) + *pBuffer++);
+    int port = 0;
+    pBuffer += deserialize_primitive(pBuffer, &port);
+    config->mqtt_port(port);
 
     return pBuffer-buffer;
   }
@@ -45,6 +47,16 @@ namespace SmartMeter {
   size_t ConfigSerializer::serialize_string(char * buffer, String value) {
     value.toCharArray(buffer, value.length()+1);
     return value.length()+1;
+  }
+
+  size_t ConfigSerializer::serialize_primitive(char * buffer, int value) {
+    memcpy(buffer, (char*)(&value), sizeof(value));
+    return sizeof(value);
+  }
+
+  size_t ConfigSerializer::deserialize_primitive(char * buffer, int * value) {
+    memcpy((char*)(value), buffer, sizeof(*value));
+    return sizeof(*value);
   }
 
 };

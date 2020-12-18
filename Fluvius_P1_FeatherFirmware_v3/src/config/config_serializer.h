@@ -20,6 +20,8 @@ namespace SmartMeter {
 
     private:
       static size_t serialize_string(char * buffer, String value);
+      static size_t serialize_primitive(char * buffer, int value);
+      static size_t deserialize_primitive(char * buffer, int * value);
 
   };
 

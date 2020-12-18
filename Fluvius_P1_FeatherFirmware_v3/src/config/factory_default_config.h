@@ -13,5 +13,5 @@ namespace SmartMeter {
   #define NETWORK_DEFAULT_SUBNET ""
   #define NETWORK_DEFAULT_GATEWAY ""
 
-  #define METER_DEFAULT_FREQ 60000
+  #define METER_DEFAULT_FREQ 60000L
 };

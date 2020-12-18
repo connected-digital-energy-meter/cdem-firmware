@@ -11,7 +11,7 @@ namespace SmartMeter {
     _static_ip = "0.0.0.0";
     _subnet_mask = "0.0.0.0";
     _default_gateway = "0.0.0.0";
-    _read_freq = 60000;
+    _read_freq = 60000L;
   }
 
   void Configuration::wifi_ssid(String ssid) {
@@ -83,7 +83,7 @@ namespace SmartMeter {
   }
   
   long Configuration::read_freq(void) {
-    return _read_freq
+    return _read_freq;
   }
 
   String Configuration::to_string(void) {
@@ -91,11 +91,11 @@ namespace SmartMeter {
     output += "SSID: " + _wifiSSID + "\n";
     output += "Password: " + _wifiPassword + "\n";
     output += "Broker: " + _mqttBroker + "\n";
-    output += "Port: " + String(_mqttPort);
-    output += "Topic: " + _mqtt_topic;
-    output += "Static IP: " + _static_ip;
-    output += "Subnet Mask: " + _subnet_mask;
-    output += "Default Gateway: " + _default_gateway;
+    output += "Port: " + String(_mqttPort) + "\n";
+    output += "Topic: " + _mqtt_topic + "\n";
+    output += "Static IP: " + _static_ip + "\n";
+    output += "Subnet Mask: " + _subnet_mask + "\n";
+    output += "Default Gateway: " + _default_gateway + "\n";
     output += "Read frequency: " + String(_read_freq);
     return output;
   }

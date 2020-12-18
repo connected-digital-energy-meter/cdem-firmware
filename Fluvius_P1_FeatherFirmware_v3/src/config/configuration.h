@@ -28,7 +28,7 @@ namespace SmartMeter {
       void static_ip(String ip);
       String static_ip(void);
       
-      void subnet_mask(int mask);
+      void subnet_mask(String mask);
       String subnet_mask(void);
       
       void default_gateway(String gateway);

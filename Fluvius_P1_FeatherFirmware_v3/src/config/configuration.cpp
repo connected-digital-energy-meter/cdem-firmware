@@ -46,43 +46,43 @@ namespace SmartMeter {
     return _mqttPort;
   }
 
-  void Configuration::mqtt_topic(String topic){
+  void Configuration::mqtt_topic(String topic) {
     _mqtt_topic = topic;
   }
 
-  String Configuration::mqtt_topic(void){
+  String Configuration::mqtt_topic(void) {
     return _mqtt_topic;
   }
       
-  void Configuration::static_ip(String ip){
+  void Configuration::static_ip(String ip) {
     _static_ip = ip;
   }
       
-  String Configuration::static_ip(void){
+  String Configuration::static_ip(void) {
     return _static_ip;
   }
       
-  void Configuration::subnet_mask(int mask){
+  void Configuration::subnet_mask(String mask) {
     _subnet_mask = mask;
   }
 
-  String Configuration::subnet_mask(void){
+  String Configuration::subnet_mask(void) {
     return _subnet_mask;
   }
       
-  void Configuration::default_gateway(String gateway){
+  void Configuration::default_gateway(String gateway) {
     _default_gateway = gateway;
   }
       
-  String Configuration::default_gateway(void){
+  String Configuration::default_gateway(void) {
     return _default_gateway;
   }
       
-  void Configuration::read_freq(long freq){
+  void Configuration::read_freq(long freq) {
     _read_freq = freq;
   }
   
-  long Configuration::read_freq(void){
+  long Configuration::read_freq(void) {
     return _read_freq
   }
 

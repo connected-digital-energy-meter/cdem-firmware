@@ -14,13 +14,10 @@
 // Include custom libraries
 #include "hardware.h"
 #include "src/rgb/rgb_led.h"
-#include "variables_and_classes.h"
-#include "src/digital_meter/datagram.h"
-#include "src/digital_meter/digital_meter.h"
-#include "src/digital_meter/decoder.h"
-#include "src/mqtt/datagram_publisher.h"
 #include "src/config/config_serializer.h"
 #include "src/config/config_manager.h"
+#include "src/boot/boot_manager.h"
+#include "src/smart_meter/smart_digital_meter.h"
 
 // Using the namespace SmartMeter
 using namespace SmartMeter;
@@ -34,12 +31,10 @@ Color NoMqttColor(Color::ORANGE().dim(20));
 Color ComOkColor(Color::GREEN().dim(20));
 
 // Initiate variable of Digitalmeter and configurationmanager.
-DigitalMeter meter(REQUEST_PIN, &SerialMeter, &SerialDebug);
 ConfigManager configManager;
 
-// Initialise temporary datagrambuffer and datagram 
-char datagramBuffer[1024] = {0};
-SmartMeter::Datagram datagram;
+SmartDigitalMeter smartMeter;
+TimerHandle_t wifiReconnectTimer;
 
 // Connect to WiFi
 void connectToWifi() {
@@ -50,12 +45,6 @@ void connectToWifi() {
   );
 }
 
-// Connect to MQTT broker
-void connectToMqtt() {
-  Serial.println("Connecting to MQTT...");
-  publisher.connect();
-}
-
 // Handle WiFi events
 void WiFiEvent(WiFiEvent_t event) {
   switch(event) {
@@ -64,12 +53,13 @@ void WiFiEvent(WiFiEvent_t event) {
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
       commLed.color(NoMqttColor);
-      connectToMqtt();
+      smartMeter.start(configManager.current_config());
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       Serial.println("WiFi lost connection");
       xTimerStart(wifiReconnectTimer, 0);
       commLed.color(NoWifiColor);
+      smartMeter.stop();
       break;
   }
 }
@@ -77,19 +67,11 @@ void WiFiEvent(WiFiEvent_t event) {
 void setup() {
   // Set the baudrate for both serial connections
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
-  SerialMeter.begin(METER_BAUDRATE);
-
   SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
-
-  // Pin Setup for request data
-  pinMode(REQUEST_PIN, OUTPUT);
 
   // Initiate the led's on the pcb
   commLed.on();
   commLed.color(NoWifiColor);
-
-  // Stop requesting data from the meter
-  meter.disable();
 
   // Loading the EEPROM or factory default configuration settings 
   SerialDebug.println("Loading configuration ...");
@@ -112,8 +94,8 @@ void setup() {
   delay(5000);
   SerialDebug.println("Continuing boot procedure ...");
 
-  // Initiate MQTT publisher
-  DatagramPublisher publisher(configManager.current_config()->mqtt_broker().c_str(), configManager.current_config()->mqtt_port().c_str(), &SerialDebug);
+  BootManager bootManager(*configManager.current_config(), &SerialDebug);
+  bootManager.Enable_Bootmenu();
 
   // Setup timers for WiFi and MQTT
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
@@ -124,58 +106,9 @@ void setup() {
   // Make Wifi Connection
   connectToWifi();
 
-  // Start time for period
-  const long    period = configManager.current_config()->read_freq().c_str() ;
-  startMillis = millis();
   SerialDebug.println("Boot finished");
 }
 
 void loop() {
-
-  // Current time for period
-  currentMillis = millis();
-
-  // Wait until next period  
-  if((currentMillis - startMillis) >= period){
-
-    switch (currentState){
-      // Request data
-      case State::IDLE:
-        meter.enable();
-        currentState = State::READING_DATAGRAM;
-        break;
-      // Read data
-      case State::READING_DATAGRAM:
-        if (meter.read_datagram(datagramBuffer, sizeof(datagramBuffer))) {
-          currentState = State::DATAGRAM_READY;
-        }
-        break;
-      // Stop requesting data
-      case State::DATAGRAM_READY:        
-        meter.disable();
-        currentState = State::PROCESSING_DATA_GRAM;
-        break;
-      // Decode data  
-      case State::PROCESSING_DATA_GRAM:
-        datagram = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
-        SerialDebug.println("Decoded datagram:");
-        SerialDebug.println(datagram.to_string());
-        currentState = State::DATAGRAM_DECODED;
-        break;
-      // Publish data to MQTT  
-      case State::DATAGRAM_DECODED:
-        publisher.publish(&datagram);
-        SerialDebug.println("Datagram published");
-        // Ready for next request    
-        currentState = State::IDLE;
-        // reset timer
-        startMillis = currentMillis;
-        break;
-    }
-  }
+  smartMeter.process();
 }
-
-
-
-
-

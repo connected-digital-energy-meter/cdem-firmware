@@ -40,6 +40,10 @@ namespace SmartMeter {
     public:
       String to_string(void);
 
+    public:
+      bool operator==(const Configuration& rhs);
+      bool operator!=(const Configuration& rhs);
+
     private:
       String _wifiSSID;
       String _wifiPassword;

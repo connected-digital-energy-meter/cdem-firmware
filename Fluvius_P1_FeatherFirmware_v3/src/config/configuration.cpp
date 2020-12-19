@@ -100,4 +100,22 @@ namespace SmartMeter {
     return output;
   }
 
+  bool Configuration::operator==(const Configuration& rhs) {
+    return (
+      _wifiSSID == rhs._wifiSSID &&
+      _wifiPassword == rhs._wifiPassword &&
+      _mqttBroker == rhs._mqttBroker &&
+      _mqttPort == rhs._mqttPort &&
+      _mqtt_topic == rhs._mqtt_topic &&
+      _static_ip == rhs._static_ip &&
+      _subnet_mask == rhs._subnet_mask &&
+      _default_gateway == rhs._default_gateway &&
+      _read_freq == rhs._read_freq
+    );
+  }
+
+  bool Configuration::operator!=(const Configuration& rhs) {
+    return !(*this == rhs);
+  }
+
 };

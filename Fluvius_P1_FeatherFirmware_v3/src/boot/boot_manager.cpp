@@ -4,6 +4,10 @@
 
 namespace SmartMeter {
 
+  BootManager::BootManager(void) {
+    pinMode(BOOT_PIN, INPUT_PULLUP);
+  }
+
   Configuration BootManager::boot(void) {
     // Loading the EEPROM or factory default configuration settings 
     SerialDebug.println("Loading configuration ...");
@@ -19,6 +23,20 @@ namespace SmartMeter {
         SerialDebug.println("Something went wrong. Could not save configuration");
       }
     }
+
+    SerialDebug.println("Hold the touch if you wish to boot into boot menu");
+    SerialDebug.print("Booting in");
+    for (int i = BOOT_MENU_TIME; i >= 0; i--) {
+      SerialDebug.print(" ... " + String(i));
+      if (!digitalRead(BOOT_PIN)) {
+        SerialDebug.println("");
+        show_boot_menu();
+        break;
+      }
+      delay(1000);
+    }
+
+    SerialDebug.println("");
 
     return *configManager.current_config();
   }

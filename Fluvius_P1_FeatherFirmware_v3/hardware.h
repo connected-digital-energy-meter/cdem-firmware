@@ -14,6 +14,7 @@
 
 // Set DataRequest pin
 const int REQUEST_PIN = 14;
+const int BOOT_PIN = 21;        // TODO - Replace with real pin
 
 // RGB led pins
 #define DATA_LED_R 5    // SCK

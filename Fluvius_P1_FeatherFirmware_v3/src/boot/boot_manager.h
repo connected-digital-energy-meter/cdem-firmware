@@ -12,6 +12,9 @@ namespace SmartMeter {
   class BootManager {
 
     public:
+      BootManager(void);
+
+    public:
       Configuration boot(void);
 
     private:
@@ -20,6 +23,8 @@ namespace SmartMeter {
     private:
       ConfigManager configManager;
 
+    private:
+      const int BOOT_MENU_TIME = 10;  // Seconds
   };
 
 };

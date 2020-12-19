@@ -11,23 +11,27 @@ namespace SmartMeter {
   class BootConfig {
 
     public:
-      BootConfig(Configuration current_config, HardwareSerial * userSerial);
+      BootConfig(Configuration currentConfig, HardwareSerial * userSerial);
 
     public:
       //functions
-      void Enable_Bootmenu(void);
+      Configuration Enable_Bootmenu(void);
 
     private:  
-      void Save_Settings(void);
       int Menu_Selection(void);
       void Menu_Action(void);  
       String Request_Input(String info, String current_value);
 
+    private:
+      void reset_new_config(void);
+
     public:
       //variables
-      Configuration current_config;
+      Configuration originalConfig;
+      Configuration newConfig;
       bool showboot_config;
       HardwareSerial * userSerial;
+      bool returnNewConfig = false;
   };
 
 };

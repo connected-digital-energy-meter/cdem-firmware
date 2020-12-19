@@ -20,7 +20,8 @@ namespace SmartMeter {
       void factory_default(void);
 
     public:
-      Configuration * current_config(void);
+      void current_config(Configuration config);
+      Configuration current_config(void);
 
     private:
       bool initialize_eeprom(void);

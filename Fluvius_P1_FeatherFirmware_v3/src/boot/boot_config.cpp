@@ -4,21 +4,23 @@
 namespace SmartMeter {
 
   //Constructor
-  BootConfig::BootConfig(Configuration current_config, HardwareSerial * userSerial) {
-    this->current_config=current_config;
+  BootConfig::BootConfig(Configuration currentConfig, HardwareSerial * userSerial) {
+    this->originalConfig = currentConfig;
+    reset_new_config();
     this->userSerial = userSerial;
   }
 
-  void BootConfig::Enable_Bootmenu(void) {
+  void BootConfig::reset_new_config(void) {
+    newConfig = originalConfig;
+  }
+
+  Configuration BootConfig::Enable_Bootmenu(void) {
     showboot_config = true;
     while (showboot_config) {
       Menu_Action();
     }
-  }
 
-  // save settings from EEPROM ??
-  void BootConfig::Save_Settings(void) {
-  
+    return (returnNewConfig ? newConfig : originalConfig);
   }
 
   // Get menu selection
@@ -48,47 +50,47 @@ namespace SmartMeter {
   void BootConfig::Menu_Action(void) {
     switch (Menu_Selection()) {
       case 1:
-        current_config.wifi_ssid(Request_Input("Wifi SSID", current_config.wifi_ssid()));
+        newConfig.wifi_ssid(Request_Input("Wifi SSID", newConfig.wifi_ssid()));
         break;
 
       case 2:
-        current_config.wifi_password(Request_Input("Wifi Password", current_config.wifi_password()));
+        newConfig.wifi_password(Request_Input("Wifi Password", newConfig.wifi_password()));
         break;
 
       case 3:
-        current_config.static_ip(Request_Input("Static IP", current_config.static_ip()));
+        newConfig.static_ip(Request_Input("Static IP", newConfig.static_ip()));
         break;
 
       case 4:
-        current_config.subnet_mask(Request_Input("Subnet Mask", current_config.subnet_mask()));
+        newConfig.subnet_mask(Request_Input("Subnet Mask", newConfig.subnet_mask()));
         break;
 
       case 5:
-        current_config.default_gateway(Request_Input("Default Gateway", current_config.default_gateway()));
+        newConfig.default_gateway(Request_Input("Default Gateway", newConfig.default_gateway()));
         break;
 
       case 6:
-        current_config.mqtt_broker(Request_Input("Broker IP", current_config.mqtt_broker()));
+        newConfig.mqtt_broker(Request_Input("Broker IP", newConfig.mqtt_broker()));
         break;
 
       case 7: {
-        int port = atoi(Request_Input("Broker Port", String(current_config.mqtt_port())).c_str());
-        current_config.mqtt_port(port);
+        int port = atoi(Request_Input("Broker Port", String(newConfig.mqtt_port())).c_str());
+        newConfig.mqtt_port(port);
         break;
       }
 
       case 8:
-        current_config.mqtt_topic(Request_Input("Broker Base topic", current_config.mqtt_topic()));
+        newConfig.mqtt_topic(Request_Input("Broker Base topic", newConfig.mqtt_topic()));
         break;
 
       case 9: {
-        long freq = atol(Request_Input("Reading frequency", String(current_config.read_freq())).c_str());
-        current_config.read_freq(freq);
+        long freq = atol(Request_Input("Reading frequency", String(newConfig.read_freq())).c_str());
+        newConfig.read_freq(freq);
         break;
       }
 
       case 10:
-        Save_Settings();
+        returnNewConfig = true;
         break;            
 
       case 11:

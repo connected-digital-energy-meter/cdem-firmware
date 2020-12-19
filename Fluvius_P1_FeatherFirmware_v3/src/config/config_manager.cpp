@@ -63,8 +63,12 @@ namespace SmartMeter {
     _currentConfig.read_freq(METER_DEFAULT_FREQ);
   }
 
-  Configuration * ConfigManager::current_config(void) {
-    return &_currentConfig;
+  void ConfigManager::current_config(Configuration config) {
+    _currentConfig = config;
+  }
+
+  Configuration ConfigManager::current_config(void) {
+    return _currentConfig;
   }
 
   void ConfigManager::write_identifier(void) {

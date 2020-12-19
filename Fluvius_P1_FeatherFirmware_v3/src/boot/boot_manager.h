@@ -19,6 +19,7 @@ namespace SmartMeter {
 
     private:
       void show_boot_menu(void);
+      void save_config(void);
 
     private:
       ConfigManager configManager;

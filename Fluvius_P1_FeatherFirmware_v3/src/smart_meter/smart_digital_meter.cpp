@@ -15,6 +15,7 @@ namespace SmartMeter {
   }
 
   void SmartDigitalMeter::start(Configuration * config) {
+    this->period = config->read_freq();
     publisher.connect(config->mqtt_broker(), config->mqtt_port());
 
     // if connected:    // TODO
@@ -33,7 +34,7 @@ namespace SmartMeter {
     currentMillis = millis();
 
     // Wait until next period  
-    if(isAcquiringData && (currentMillis - startMillis) >= current_config->read_freq()) {
+    if(isAcquiringData && (currentMillis - startMillis) >= period) {
 
       switch (currentState){
         // Request data

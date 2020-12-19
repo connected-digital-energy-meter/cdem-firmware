@@ -1,30 +1,25 @@
 #pragma once
 
-#include <Arduino.h>
+#include "../config/config_manager.h"
 #include "../config/configuration.h"
+
+// BootManager takes care of the whole boot process
+// and delivers a valid usable configuration to the
+// main system
 
 namespace SmartMeter {
 
   class BootManager {
 
     public:
-      BootManager(Configuration current_config, HardwareSerial * userSerial);
+      Configuration boot(void);
 
-    public:
-      //functions
-      void Enable_Bootmenu(void);
+    private:
+      void show_boot_menu(void);
 
-    private:  
-      void Save_Settings(void);
-      int Menu_Selection(void);
-      void Menu_Action(void);  
-      String Request_Input(String info, String current_value);
+    private:
+      ConfigManager configManager;
 
-    public:
-      //variables
-      Configuration current_config;
-      bool showboot_config;
-      HardwareSerial * userSerial;
   };
 
 };

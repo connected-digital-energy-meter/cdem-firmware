@@ -24,7 +24,7 @@ namespace SmartMeter {
     SerialDebug.print("Booting in");
     for (int i = BOOT_MENU_TIME; i >= 0; i--) {
       SerialDebug.print(" ... " + String(i));
-      if (!digitalRead(BOOT_PIN)) {
+      if (touchRead(BOOT_PIN) < 40) {
         SerialDebug.println("");
         show_boot_menu();
         break;

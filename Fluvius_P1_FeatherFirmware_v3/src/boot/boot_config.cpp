@@ -1,6 +1,5 @@
 #include "boot_config.h"
 #include "../helpers/serial_helper.h"
-#include "../validation/number_validator.h"
 
 // TODO - Add option for using DHCP (boolean)
 // TODO - Allow wizard to be started
@@ -9,7 +8,9 @@
 namespace SmartMeter {
 
   // Constructor
-  BootConfig::BootConfig(Configuration currentConfig, HardwareSerial * userSerial) {
+  BootConfig::BootConfig(Configuration currentConfig, HardwareSerial * userSerial)
+    : userConfigInputHelper(userSerial) {
+
     this->originalConfig = currentConfig;
     reset_new_config();
     this->userSerial = userSerial;
@@ -89,19 +90,19 @@ namespace SmartMeter {
       selection = request_network_menu_selection();
       switch (selection) {
         case 1:
-          configure_wifi_ssid();
+          userConfigInputHelper.configure_wifi_ssid(&newConfig);
           break;
         case 2:
-          configure_wifi_password();
+          userConfigInputHelper.configure_wifi_password(&newConfig);
           break;
         case 3:
-          configure_static_ip();
+          userConfigInputHelper.configure_static_ip(&newConfig);
           break;
         case 4:
-          configure_subnet_mask();
+          userConfigInputHelper.configure_subnet_mask(&newConfig);
           break;
         case 5:
-          configure_default_gateway();
+          userConfigInputHelper.configure_default_gateway(&newConfig);
           break;
       }
     } while (selection != 6);
@@ -129,39 +130,19 @@ namespace SmartMeter {
     return choice;
   }
 
-  void BootConfig::configure_wifi_ssid(void) {
-    newConfig.wifi_ssid(request_input("Wifi SSID", newConfig.wifi_ssid()));
-  }
-
-  void BootConfig::configure_wifi_password(void) {
-    newConfig.wifi_password(request_input("Wifi Password", newConfig.wifi_password()));
-  }
-
-  void BootConfig::configure_static_ip(void) {
-    newConfig.static_ip(request_input("Network Static IP", newConfig.static_ip()));
-  }
-
-  void BootConfig::configure_subnet_mask(void) {
-    newConfig.subnet_mask(request_input("Network Subnet Mask", newConfig.subnet_mask()));
-  }
-
-  void BootConfig::configure_default_gateway(void) {
-    newConfig.default_gateway(request_input("Network Default Gateway", newConfig.default_gateway()));
-  }
-
   void BootConfig::configure_mqtt(void) {
     int selection = 0;
     do {
       selection = request_mqtt_menu_selection();
       switch (selection) {
         case 1:
-          configure_mqtt_broker();
+          userConfigInputHelper.configure_mqtt_broker(&newConfig);
           break;
         case 2:
-          configure_mqtt_broker_port();
+          userConfigInputHelper.configure_mqtt_broker_port(&newConfig);
           break;
         case 3:
-          configure_mqtt_topic();
+          userConfigInputHelper.configure_mqtt_topic(&newConfig);
           break;
       }
     } while (selection != 4);
@@ -187,26 +168,13 @@ namespace SmartMeter {
     return choice;
   }
 
-  void BootConfig::configure_mqtt_broker(void) {
-    newConfig.mqtt_broker(request_input("MQTT Broker IP", newConfig.mqtt_broker()));
-  }
-
-  void BootConfig::configure_mqtt_broker_port(void) {
-    int port = atoi(request_input("MQTT Broker Port", String(newConfig.mqtt_port())).c_str());
-    newConfig.mqtt_port(port);
-  }
-
-  void BootConfig::configure_mqtt_topic(void) {
-    newConfig.mqtt_topic(request_input("MQTT Broker Topic", newConfig.mqtt_topic()));
-  }
-
   void BootConfig::configure_meter(void) {
     int selection = 0;
     do {
       selection = request_meter_menu_selection();
       switch (selection) {
         case 1:
-          configure_device_read_period();
+          userConfigInputHelper.configure_device_read_period(&newConfig);
           break;
       }
     } while (selection != 2);
@@ -230,15 +198,6 @@ namespace SmartMeter {
     return choice;
   }
 
-  void BootConfig::configure_device_read_period(void) {
-    NumberValidator validator(1, 3600);
-    unsigned int period = atoi(request_input( "Meter Read Period (seconds)",
-                                              String(newConfig.read_period()),
-                                              &validator
-                                            ).c_str());
-    newConfig.read_period(period);
-  }
-
   void BootConfig::restore_factory_defaults(void) {
     String input = "";
     do {
@@ -252,29 +211,6 @@ namespace SmartMeter {
     if (input == "y") {
       newConfig = Configuration();
     }
-  }
-
-  String BootConfig::request_input(String key, String value, Validator * validator) {
-    bool valid = false;
-    String input = "";
-    do {
-      userSerial->println("");
-      userSerial->println("Current " + key + " is " + value);
-      userSerial->println("Provide new value for " + key + " or just enter to keep current value.");
-      userSerial->println(key + ": ");
-      input = SerialHelper::read_line(userSerial);
-      userSerial->println("");
-
-      if (input != "" && validator) {
-        if (!(valid = validator->is_valid(input))) {
-          userSerial->println("Invalid input: " + validator->validation_error());
-        }
-      } else {
-        valid = true;
-      }
-    } while (!valid);
-
-    return (input == "") ? value : input;
   }
 
 }

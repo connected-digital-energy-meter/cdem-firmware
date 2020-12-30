@@ -17,7 +17,8 @@ namespace SmartMeter {
       SerialDebug.println("No existing configuration could be loaded");
       SerialDebug.println("Saving factory default configuration");
       configManager.factory_default();
-      save_config();
+      // save_config();
+      // TODO Show config wizard !
     }
 
     SerialDebug.println("Hold the touch if you wish to boot into boot menu");

@@ -35,10 +35,18 @@ namespace SmartMeter {
         case 3:
           configure_meter();
           break;
-      }
-    } while (menuSelection < 4);
 
-    if (menuSelection == 4) return newConfig;
+        case 4:
+          userSerial->println("TODO - Use Configuration Wizard - NOT IMPLEMENTED YET!!!");
+          break;
+
+        case 5:
+          restore_factory_defaults();
+          break;
+      }
+    } while (menuSelection < 6);
+
+    if (menuSelection == 6) return newConfig;
     else return originalConfig;
   }
 
@@ -61,12 +69,14 @@ namespace SmartMeter {
       userSerial->println("1. Change Network/WiFi settings");
       userSerial->println("2. Change MQTT settings");
       userSerial->println("3. Change Meter settings");
-      userSerial->println("4. Save & Continue Boot");
-      userSerial->println("5. Discard & Continue Boot");
+      userSerial->println("4. TODO - Use Configuration Wizard");
+      userSerial->println("5. Restore Factory Defaults");
+      userSerial->println("6. Save & Continue Boot");
+      userSerial->println("7. Discard & Continue Boot");
       userSerial->print("Please pick an option [1-6]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
-    } while (choice < 1 && choice > 5);
+    } while (choice < 1 && choice > 7);
 
     return choice;
   }
@@ -220,6 +230,21 @@ namespace SmartMeter {
     newConfig.read_freq(period);
   }
 
+  void BootConfig::restore_factory_defaults(void) {
+    String input = "";
+    do {
+      userSerial->println("");
+      userSerial->println("Are you sure you wish to reset the configuration to factory defaults? [y/N]");
+      input = SerialHelper::read_line(userSerial);
+      input.toLowerCase();
+      userSerial->println("");
+    } while (input != "y" && input != "n" && input != "");
+
+    if (input == "y") {
+      newConfig = Configuration();
+    }
+  }
+
   String BootConfig::request_input(String key, String value) {
     userSerial->println("");
     userSerial->println("Current " + key + " is " + value);
@@ -230,5 +255,5 @@ namespace SmartMeter {
 
     return (input == "") ? value : input;
   }
-   
+
 }

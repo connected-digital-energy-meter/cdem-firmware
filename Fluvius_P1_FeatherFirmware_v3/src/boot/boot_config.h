@@ -44,15 +44,16 @@ namespace SmartMeter {
       void configure_device_read_period(void);
 
     private:
+      void restore_factory_defaults(void);
+
+    private:
       String request_input(String info, String current_value);
 
     public:
       //variables
       Configuration originalConfig;
       Configuration newConfig;
-      bool showboot_config;
       HardwareSerial * userSerial;
-      bool returnNewConfig = false;
   };
 
 };

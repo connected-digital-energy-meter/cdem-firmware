@@ -32,11 +32,15 @@ namespace SmartMeter {
       void configure_default_gateway(void);
 
     private:
+      void configure_mqtt(void);
+      int request_mqtt_menu_selection(void);
       void configure_mqtt_broker(void);
       void configure_mqtt_broker_port(void);
       void configure_mqtt_topic(void);
 
     private:
+      void configure_meter(void);
+      int request_meter_menu_selection(void);
       void configure_device_read_period(void);
 
     private:

@@ -2,6 +2,8 @@
 #include "../helpers/serial_helper.h"
 
 // TODO - Add option for using DHCP (boolean)
+// TODO - Allow wizard to be started
+// TODO - Reset to Defaults option
 
 namespace SmartMeter {
 
@@ -24,6 +26,14 @@ namespace SmartMeter {
       switch (menuSelection) {
         case 1:
           configure_network();
+          break;
+
+        case 2:
+          configure_mqtt();
+          break;
+
+        case 3:
+          configure_meter();
           break;
       }
     } while (menuSelection < 4);
@@ -126,6 +136,43 @@ namespace SmartMeter {
     newConfig.default_gateway(request_input("Network Default Gateway", newConfig.default_gateway()));
   }
 
+  void BootConfig::configure_mqtt(void) {
+    int selection = 0;
+    do {
+      selection = request_mqtt_menu_selection();
+      switch (selection) {
+        case 1:
+          configure_mqtt_broker();
+          break;
+        case 2:
+          configure_mqtt_broker_port();
+          break;
+        case 3:
+          configure_mqtt_topic();
+          break;
+      }
+    } while (selection != 4);
+  }
+
+  int BootConfig::request_mqtt_menu_selection(void) {
+    int choice = 0;
+
+    do {
+      userSerial->println("");
+      userSerial->println("MQTT Configuration");
+      userSerial->println("------------------");
+      userSerial->println("1. Change MQTT Broker [" + newConfig.mqtt_broker() + "]");
+      userSerial->println("2. Change MQTT Port [" + String(newConfig.mqtt_port()) + "]");
+      userSerial->println("3. Change MQTT Base Topic [" + newConfig.mqtt_topic() + "]");
+      userSerial->println("4. Return");
+      userSerial->print("Please pick an option [1-4]: ");
+      choice = atoi(SerialHelper::read_line(userSerial).c_str());
+      userSerial->println("");
+    } while (choice < 1 && choice > 4);
+
+    return choice;
+  }
+
   void BootConfig::configure_mqtt_broker(void) {
     newConfig.mqtt_broker(request_input("MQTT Broker IP", newConfig.mqtt_broker()));
   }
@@ -137,6 +184,35 @@ namespace SmartMeter {
 
   void BootConfig::configure_mqtt_topic(void) {
     newConfig.mqtt_topic(request_input("MQTT Broker Topic", newConfig.mqtt_topic()));
+  }
+
+  void BootConfig::configure_meter(void) {
+    int selection = 0;
+    do {
+      selection = request_meter_menu_selection();
+      switch (selection) {
+        case 1:
+          configure_device_read_period();
+          break;
+      }
+    } while (selection != 2);
+  }
+
+  int BootConfig::request_meter_menu_selection(void) {
+    int choice = 0;
+
+    do {
+      userSerial->println("");
+      userSerial->println("Meter Configuration");
+      userSerial->println("------------------");
+      userSerial->println("1. Change Read Period [" + String(newConfig.read_freq()) + "]");
+      userSerial->println("2. Return");
+      userSerial->print("Please pick an option [1-2]: ");
+      choice = atoi(SerialHelper::read_line(userSerial).c_str());
+      userSerial->println("");
+    } while (choice < 1 && choice > 2);
+
+    return choice;
   }
 
   void BootConfig::configure_device_read_period(void) {

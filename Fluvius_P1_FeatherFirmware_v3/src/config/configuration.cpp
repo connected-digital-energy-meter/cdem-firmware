@@ -12,7 +12,7 @@ namespace SmartMeter {
     static_ip(NETWORK_DEFAULT_IP);
     default_gateway(NETWORK_DEFAULT_GATEWAY);
     subnet_mask(NETWORK_DEFAULT_SUBNET);
-    read_freq(METER_DEFAULT_FREQ);
+    read_period(METER_DEFAULT_READ_PERIOD_SECONDS);
   }
 
   void Configuration::wifi_ssid(String ssid) {
@@ -79,12 +79,12 @@ namespace SmartMeter {
     return _default_gateway;
   }
       
-  void Configuration::read_freq(long freq) {
-    _read_freq = freq;
+  void Configuration::read_period(unsigned int period) {
+    _read_period = period;
   }
   
-  long Configuration::read_freq(void) {
-    return _read_freq;
+  unsigned int Configuration::read_period(void) {
+    return _read_period;
   }
 
   String Configuration::to_string(void) {
@@ -97,7 +97,7 @@ namespace SmartMeter {
     output += "Static IP: " + _static_ip + "\n";
     output += "Subnet Mask: " + _subnet_mask + "\n";
     output += "Default Gateway: " + _default_gateway + "\n";
-    output += "Read frequency: " + String(_read_freq);
+    output += "Read period (seconds): " + String(_read_period);
     return output;
   }
 
@@ -111,7 +111,7 @@ namespace SmartMeter {
       _static_ip == rhs._static_ip &&
       _subnet_mask == rhs._subnet_mask &&
       _default_gateway == rhs._default_gateway &&
-      _read_freq == rhs._read_freq
+      _read_period == rhs._read_period
     );
   }
 

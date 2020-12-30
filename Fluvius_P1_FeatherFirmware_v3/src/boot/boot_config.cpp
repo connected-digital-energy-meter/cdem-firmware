@@ -215,7 +215,7 @@ namespace SmartMeter {
       userSerial->println("");
       userSerial->println("Meter Configuration");
       userSerial->println("------------------");
-      userSerial->println("1. Change Read Period [" + String(newConfig.read_freq()) + "]");
+      userSerial->println("1. Change Read Period [" + String(newConfig.read_period()) + " seconds]");
       userSerial->println("2. Return");
       userSerial->print("Please pick an option [1-2]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
@@ -226,8 +226,8 @@ namespace SmartMeter {
   }
 
   void BootConfig::configure_device_read_period(void) {
-    long period = atol(request_input("Meter Read Period", String(newConfig.read_freq())).c_str());
-    newConfig.read_freq(period);
+    long period = atol(request_input("Meter Read Period (seconds)", String(newConfig.read_period())).c_str());
+    newConfig.read_period(period);
   }
 
   void BootConfig::restore_factory_defaults(void) {
@@ -248,7 +248,7 @@ namespace SmartMeter {
   String BootConfig::request_input(String key, String value) {
     userSerial->println("");
     userSerial->println("Current " + key + " is " + value);
-    userSerial->println("Provide new value for " + key + " or just enter to keep current value");
+    userSerial->println("Provide new value for " + key + " or just enter to keep current value.");
     userSerial->println(key + ": ");
     String input = SerialHelper::read_line(userSerial);
     userSerial->println("");

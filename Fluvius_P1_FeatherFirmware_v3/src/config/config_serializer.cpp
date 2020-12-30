@@ -12,7 +12,7 @@ namespace SmartMeter {
       + config->static_ip().length() + 1
       + config->subnet_mask().length() + 1
       + config->default_gateway().length() + 1
-      + sizeof(config->read_freq())
+      + sizeof(config->read_period())
 
       + 2;  // For length at beginning
 
@@ -30,7 +30,7 @@ namespace SmartMeter {
     pBuffer += serialize_string(pBuffer, config->static_ip());
     pBuffer += serialize_string(pBuffer, config->subnet_mask());
     pBuffer += serialize_string(pBuffer, config->default_gateway());
-    pBuffer += serialize_primitive(pBuffer, config->read_freq());
+    pBuffer += serialize_primitive(pBuffer, config->read_period());
 
     return pBuffer-buffer;
   }
@@ -63,9 +63,9 @@ namespace SmartMeter {
     config->default_gateway(String(pBuffer));
     pBuffer += config->default_gateway().length() + 1;
 
-    long readFreq = 0;
-    pBuffer += deserialize_primitive(pBuffer, &readFreq);
-    config->read_freq(readFreq);
+    unsigned int readPeriod = 0;
+    pBuffer += deserialize_primitive(pBuffer, &readPeriod);
+    config->read_period(readPeriod);
 
     return pBuffer-buffer;
   }
@@ -85,12 +85,22 @@ namespace SmartMeter {
     return sizeof(value);
   }
 
+  size_t ConfigSerializer::serialize_primitive(char * buffer, unsigned int value) {
+    memcpy(buffer, (char*)(&value), sizeof(value));
+    return sizeof(value);
+  }
+
   size_t ConfigSerializer::deserialize_primitive(char * buffer, int * value) {
     memcpy((char*)(value), buffer, sizeof(*value));
     return sizeof(*value);
   }
 
   size_t ConfigSerializer::deserialize_primitive(char * buffer, long * value) {
+    memcpy((char*)(value), buffer, sizeof(*value));
+    return sizeof(*value);
+  }
+
+  size_t ConfigSerializer::deserialize_primitive(char * buffer, unsigned int * value) {
     memcpy((char*)(value), buffer, sizeof(*value));
     return sizeof(*value);
   }

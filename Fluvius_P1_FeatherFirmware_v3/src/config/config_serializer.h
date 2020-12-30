@@ -21,12 +21,13 @@ namespace SmartMeter {
     private:
       static size_t serialize_string(char * buffer, String value);
 
-      // For some reason compiler does not select correct method when overloading
       static size_t serialize_primitive(char * buffer, int value);
       static size_t serialize_primitive(char * buffer, long value);
+      static size_t serialize_primitive(char * buffer, unsigned int value);
 
       static size_t deserialize_primitive(char * buffer, int * value);
       static size_t deserialize_primitive(char * buffer, long * value);
+      static size_t deserialize_primitive(char * buffer, unsigned int * value);
   };
 
 };

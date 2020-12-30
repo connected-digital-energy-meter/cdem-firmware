@@ -39,14 +39,14 @@ namespace SmartMeter {
 
   void BootManager::show_boot_menu(void) {
     BootConfig bootConfig(configManager.current_config(), &SerialDebug);
-    Configuration config = bootConfig.Enable_Bootmenu();    // TODO - Save config if newer
+    Configuration config = bootConfig.enable_boot_menu();    // TODO - Save config if newer
 
     if (config != this->configManager.current_config()) {
-      SerialDebug.println("User has change config. Saving it ...");
+      SerialDebug.println("Device configuration has changed. Saving it ...");
       configManager.current_config(config);
       save_config();
     } else {
-      SerialDebug.println("Config not altered. No need for saving it.");
+      SerialDebug.println("Device configuration is not altered. No need for saving it.");
     }
   }
 

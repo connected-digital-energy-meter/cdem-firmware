@@ -14,16 +14,33 @@ namespace SmartMeter {
       BootConfig(Configuration currentConfig, HardwareSerial * userSerial);
 
     public:
-      //functions
-      Configuration Enable_Bootmenu(void);
+      Configuration enable_boot_menu(void);  
 
-    private:  
-      int Menu_Selection(void);
-      void Menu_Action(void);  
-      String Request_Input(String info, String current_value);
+    private:
+      int request_menu_selection(void);
 
     private:
       void reset_new_config(void);
+
+    private:
+      void configure_network(void);
+      int request_network_menu_selection(void);
+      void configure_wifi_ssid(void);
+      void configure_wifi_password(void);
+      void configure_static_ip(void);
+      void configure_subnet_mask(void);
+      void configure_default_gateway(void);
+
+    private:
+      void configure_mqtt_broker(void);
+      void configure_mqtt_broker_port(void);
+      void configure_mqtt_topic(void);
+
+    private:
+      void configure_device_read_period(void);
+
+    private:
+      String request_input(String info, String current_value);
 
     public:
       //variables

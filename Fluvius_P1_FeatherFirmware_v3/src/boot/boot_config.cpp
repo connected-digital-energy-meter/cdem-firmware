@@ -1,9 +1,11 @@
 #include "boot_config.h"
 #include "../helpers/serial_helper.h"
 
+// TODO - Add option for using DHCP (boolean)
+
 namespace SmartMeter {
 
-  //Constructor
+  // Constructor
   BootConfig::BootConfig(Configuration currentConfig, HardwareSerial * userSerial) {
     this->originalConfig = currentConfig;
     reset_new_config();
@@ -14,101 +16,143 @@ namespace SmartMeter {
     newConfig = originalConfig;
   }
 
-  Configuration BootConfig::Enable_Bootmenu(void) {
-    showboot_config = true;
-    while (showboot_config) {
-      Menu_Action();
-    }
+  Configuration BootConfig::enable_boot_menu(void) {
+    int menuSelection = 0;
+    do {
+      menuSelection = request_menu_selection();
+    
+      switch (menuSelection) {
+        case 1:
+          configure_network();
+          break;
+      }
+    } while (menuSelection < 4);
 
-    return (returnNewConfig ? newConfig : originalConfig);
+    if (menuSelection == 4) return newConfig;
+    else return originalConfig;
   }
 
-  // Get menu selection
-  int BootConfig::Menu_Selection(void) {
-    // Show boot menu
-    userSerial->println("Config Menu");
-    userSerial->println("-----------");
-    userSerial->println("");
-    userSerial->println("1. Wifi - ssid");
-    userSerial->println("2. Wifi - password");
-    userSerial->println("3. Network - Static Ip");
-    userSerial->println("4. Network - Subnet Mask");
-    userSerial->println("5. Network - Default Gateway");
-    userSerial->println("6. Mqtt - Broker Ip");
-    userSerial->println("7. Mqtt - Broker Port");
-    userSerial->println("8. Mqtt - Broker base topic");
-    userSerial->println("9. Reading frequency");
-    userSerial->println("10. Save configuration");
-    userSerial->println("11. Exit configuration");
-    
-    userSerial->print("Please pick an option [1-11]: ");
-    int choice = atoi(SerialHelper::read_line(userSerial).c_str());   // TODO - Validate
-    
+  int BootConfig::request_menu_selection(void) {
+    int choice = 0;
+
+    do {
+      userSerial->println("");
+      userSerial->println("###########################");
+      userSerial->println("# Smart Meter Boot Config #");
+      userSerial->println("###########################");
+      userSerial->println("");
+      userSerial->println("Current configuration:");
+      userSerial->println("----------------------");
+      userSerial->println(newConfig.to_string());
+      userSerial->println("###########################");
+      userSerial->println("");
+      userSerial->println("Configuration Options:");
+      userSerial->println("----------------------");
+      userSerial->println("1. Change Network/WiFi settings");
+      userSerial->println("2. Change MQTT settings");
+      userSerial->println("3. Change Meter settings");
+      userSerial->println("4. Save & Continue Boot");
+      userSerial->println("5. Discard & Continue Boot");
+      userSerial->print("Please pick an option [1-6]: ");
+      choice = atoi(SerialHelper::read_line(userSerial).c_str());
+      userSerial->println("");
+    } while (choice < 1 && choice > 5);
+
     return choice;
   }
 
-  void BootConfig::Menu_Action(void) {
-    switch (Menu_Selection()) {
-      case 1:
-        newConfig.wifi_ssid(Request_Input("Wifi SSID", newConfig.wifi_ssid()));
-        break;
-
-      case 2:
-        newConfig.wifi_password(Request_Input("Wifi Password", newConfig.wifi_password()));
-        break;
-
-      case 3:
-        newConfig.static_ip(Request_Input("Static IP", newConfig.static_ip()));
-        break;
-
-      case 4:
-        newConfig.subnet_mask(Request_Input("Subnet Mask", newConfig.subnet_mask()));
-        break;
-
-      case 5:
-        newConfig.default_gateway(Request_Input("Default Gateway", newConfig.default_gateway()));
-        break;
-
-      case 6:
-        newConfig.mqtt_broker(Request_Input("Broker IP", newConfig.mqtt_broker()));
-        break;
-
-      case 7: {
-        int port = atoi(Request_Input("Broker Port", String(newConfig.mqtt_port())).c_str());
-        newConfig.mqtt_port(port);
-        break;
+  void BootConfig::configure_network(void) {
+    int selection = 0;
+    do {
+      selection = request_network_menu_selection();
+      switch (selection) {
+        case 1:
+          configure_wifi_ssid();
+          break;
+        case 2:
+          configure_wifi_password();
+          break;
+        case 3:
+          configure_static_ip();
+          break;
+        case 4:
+          configure_subnet_mask();
+          break;
+        case 5:
+          configure_default_gateway();
+          break;
       }
-
-      case 8:
-        newConfig.mqtt_topic(Request_Input("Broker Base topic", newConfig.mqtt_topic()));
-        break;
-
-      case 9: {
-        long freq = atol(Request_Input("Reading frequency", String(newConfig.read_freq())).c_str());
-        newConfig.read_freq(freq);
-        break;
-      }
-
-      case 10:
-        returnNewConfig = true;
-        break;            
-
-      case 11:
-        showboot_config = false;
-        break;
-    }
+    } while (selection != 6);
   }
 
-  String BootConfig::Request_Input(String info, String current_value) {
-    // Show current value
-    userSerial->println("-----------");
-    userSerial->println("");
-    userSerial->print("Current "+info+" = ");
-    userSerial->println(current_value);
-    userSerial->println("Please enter your "+info);
+  int BootConfig::request_network_menu_selection(void) {
+    int choice = 0;
 
+    do {
+      userSerial->println("");
+      userSerial->println("Network Configuration");
+      userSerial->println("------------------");
+      userSerial->println("1. Change WiFi SSID [" + newConfig.wifi_ssid() + "]");
+      userSerial->println("2. Change WiFi Password [" + newConfig.wifi_password() + "]");
+      userSerial->println("3. Change Static IP [" + newConfig.static_ip() + "]");
+      userSerial->println("4. Change Subnet Mask [" + newConfig.subnet_mask() + "]");
+      userSerial->println("5. Change Default Gateway [" + newConfig.default_gateway() + "]");
+      userSerial->println("6. Return");
+      userSerial->print("Please pick an option [1-6]: ");
+      choice = atoi(SerialHelper::read_line(userSerial).c_str());
+      userSerial->println("");
+    } while (choice < 1 && choice > 6);
+
+    return choice;
+  }
+
+  void BootConfig::configure_wifi_ssid(void) {
+    newConfig.wifi_ssid(request_input("Wifi SSID", newConfig.wifi_ssid()));
+  }
+
+  void BootConfig::configure_wifi_password(void) {
+    newConfig.wifi_password(request_input("Wifi Password", newConfig.wifi_password()));
+  }
+
+  void BootConfig::configure_static_ip(void) {
+    newConfig.static_ip(request_input("Network Static IP", newConfig.static_ip()));
+  }
+
+  void BootConfig::configure_subnet_mask(void) {
+    newConfig.subnet_mask(request_input("Network Subnet Mask", newConfig.subnet_mask()));
+  }
+
+  void BootConfig::configure_default_gateway(void) {
+    newConfig.default_gateway(request_input("Network Default Gateway", newConfig.default_gateway()));
+  }
+
+  void BootConfig::configure_mqtt_broker(void) {
+    newConfig.mqtt_broker(request_input("MQTT Broker IP", newConfig.mqtt_broker()));
+  }
+
+  void BootConfig::configure_mqtt_broker_port(void) {
+    int port = atoi(request_input("MQTT Broker Port", String(newConfig.mqtt_port())).c_str());
+    newConfig.mqtt_port(port);
+  }
+
+  void BootConfig::configure_mqtt_topic(void) {
+    newConfig.mqtt_topic(request_input("MQTT Broker Topic", newConfig.mqtt_topic()));
+  }
+
+  void BootConfig::configure_device_read_period(void) {
+    long period = atol(request_input("Meter Read Period", String(newConfig.read_freq())).c_str());
+    newConfig.read_freq(period);
+  }
+
+  String BootConfig::request_input(String key, String value) {
+    userSerial->println("");
+    userSerial->println("Current " + key + " is " + value);
+    userSerial->println("Provide new value for " + key + " or just enter to keep current value");
+    userSerial->println(key + ": ");
     String input = SerialHelper::read_line(userSerial);
-    return input;
+    userSerial->println("");
+
+    return (input == "") ? value : input;
   }
    
 }

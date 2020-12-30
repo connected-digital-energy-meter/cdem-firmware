@@ -1,17 +1,18 @@
 #include "configuration.h"
+#include "factory_default_config.h"
 
 namespace SmartMeter {
 
   Configuration::Configuration() {
-    _wifiSSID = "SSID";
-    _wifiPassword = "PASSWORD";
-    _mqttBroker = "BROKER";
-    _mqttPort = 1883;
-    _mqtt_topic = "TOPIC";
-    _static_ip = "0.0.0.0";
-    _subnet_mask = "0.0.0.0";
-    _default_gateway = "0.0.0.0";
-    _read_freq = 60000L;
+    wifi_ssid(WIFI_DEFAULT_SSID);
+    wifi_password(WIFI_DEFAULT_PASSWORD);
+    mqtt_broker(MQTT_DEFAULT_BROKER);
+    mqtt_port(MQTT_DEFAULT_PORT);
+    mqtt_topic(MQTT_DEFAULT_TOPIC);
+    static_ip(NETWORK_DEFAULT_IP);
+    default_gateway(NETWORK_DEFAULT_GATEWAY);
+    subnet_mask(NETWORK_DEFAULT_SUBNET);
+    read_freq(METER_DEFAULT_FREQ);
   }
 
   void Configuration::wifi_ssid(String ssid) {

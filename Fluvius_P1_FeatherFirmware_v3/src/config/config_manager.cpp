@@ -2,7 +2,6 @@
 
 #include "config_serializer.h"
 #include <EEPROM.h>
-#include "factory_default_config.h"
 
 namespace SmartMeter {
 
@@ -52,15 +51,7 @@ namespace SmartMeter {
   }
 
   void ConfigManager::factory_default(void) {
-    _currentConfig.wifi_ssid(WIFI_DEFAULT_SSID);
-    _currentConfig.wifi_password(WIFI_DEFAULT_PASSWORD);
-    _currentConfig.mqtt_broker(MQTT_DEFAULT_BROKER);
-    _currentConfig.mqtt_port(MQTT_DEFAULT_PORT);
-    _currentConfig.mqtt_topic(MQTT_DEFAULT_TOPIC);
-    _currentConfig.static_ip(NETWORK_DEFAULT_IP);
-    _currentConfig.default_gateway(NETWORK_DEFAULT_GATEWAY);
-    _currentConfig.subnet_mask(NETWORK_DEFAULT_SUBNET);
-    _currentConfig.read_freq(METER_DEFAULT_FREQ);
+    _currentConfig = Configuration();
   }
 
   void ConfigManager::current_config(Configuration config) {

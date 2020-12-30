@@ -5,6 +5,7 @@
 
 #include <Arduino.h>
 #include "../config/configuration.h"
+#include "../validation/validator.h"
 
 namespace SmartMeter {
 
@@ -47,7 +48,7 @@ namespace SmartMeter {
       void restore_factory_defaults(void);
 
     private:
-      String request_input(String info, String current_value);
+      String request_input(String info, String current_value, Validator * validator=nullptr);
 
     public:
       //variables

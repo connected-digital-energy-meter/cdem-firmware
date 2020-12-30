@@ -1,5 +1,6 @@
 #include "boot_config.h"
 #include "../helpers/serial_helper.h"
+#include "../validation/number_validator.h"
 
 // TODO - Add option for using DHCP (boolean)
 // TODO - Allow wizard to be started
@@ -73,6 +74,7 @@ namespace SmartMeter {
       userSerial->println("5. Restore Factory Defaults");
       userSerial->println("6. Save & Continue Boot");
       userSerial->println("7. Discard & Continue Boot");
+      userSerial->println("");
       userSerial->print("Please pick an option [1-6]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
@@ -118,6 +120,7 @@ namespace SmartMeter {
       userSerial->println("4. Change Subnet Mask [" + newConfig.subnet_mask() + "]");
       userSerial->println("5. Change Default Gateway [" + newConfig.default_gateway() + "]");
       userSerial->println("6. Return");
+      userSerial->println("");
       userSerial->print("Please pick an option [1-6]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
@@ -175,6 +178,7 @@ namespace SmartMeter {
       userSerial->println("2. Change MQTT Port [" + String(newConfig.mqtt_port()) + "]");
       userSerial->println("3. Change MQTT Base Topic [" + newConfig.mqtt_topic() + "]");
       userSerial->println("4. Return");
+      userSerial->println("");
       userSerial->print("Please pick an option [1-4]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
@@ -217,6 +221,7 @@ namespace SmartMeter {
       userSerial->println("------------------");
       userSerial->println("1. Change Read Period [" + String(newConfig.read_period()) + " seconds]");
       userSerial->println("2. Return");
+      userSerial->println("");
       userSerial->print("Please pick an option [1-2]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
@@ -226,7 +231,11 @@ namespace SmartMeter {
   }
 
   void BootConfig::configure_device_read_period(void) {
-    long period = atol(request_input("Meter Read Period (seconds)", String(newConfig.read_period())).c_str());
+    NumberValidator validator(1, 3600);
+    unsigned int period = atoi(request_input( "Meter Read Period (seconds)",
+                                              String(newConfig.read_period()),
+                                              &validator
+                                            ).c_str());
     newConfig.read_period(period);
   }
 
@@ -245,13 +254,25 @@ namespace SmartMeter {
     }
   }
 
-  String BootConfig::request_input(String key, String value) {
-    userSerial->println("");
-    userSerial->println("Current " + key + " is " + value);
-    userSerial->println("Provide new value for " + key + " or just enter to keep current value.");
-    userSerial->println(key + ": ");
-    String input = SerialHelper::read_line(userSerial);
-    userSerial->println("");
+  String BootConfig::request_input(String key, String value, Validator * validator) {
+    bool valid = false;
+    String input = "";
+    do {
+      userSerial->println("");
+      userSerial->println("Current " + key + " is " + value);
+      userSerial->println("Provide new value for " + key + " or just enter to keep current value.");
+      userSerial->println(key + ": ");
+      input = SerialHelper::read_line(userSerial);
+      userSerial->println("");
+
+      if (input != "" && validator) {
+        if (!(valid = validator->is_valid(input))) {
+          userSerial->println("Invalid input: " + validator->validation_error());
+        }
+      } else {
+        valid = true;
+      }
+    } while (!valid);
 
     return (input == "") ? value : input;
   }

@@ -89,15 +89,15 @@ namespace SmartMeter {
 
   String Configuration::to_string(void) {
     String output = "";
-    output += "SSID: " + _wifiSSID + "\n";
-    output += "Password: " + _wifiPassword + "\n";
-    output += "Broker: " + _mqttBroker + "\n";
-    output += "Port: " + String(_mqttPort) + "\n";
-    output += "Topic: " + _mqtt_topic + "\n";
-    output += "Static IP: " + _static_ip + "\n";
-    output += "Subnet Mask: " + _subnet_mask + "\n";
+    output += "WiFi SSID:       " + _wifiSSID + "\n";
+    output += "WiFi Password:   " + _wifiPassword + "\n";
+    output += "Static IP:       " + _static_ip + "\n";
+    output += "Subnet Mask:     " + _subnet_mask + "\n";
     output += "Default Gateway: " + _default_gateway + "\n";
-    output += "Read period (seconds): " + String(_read_period);
+    output += "MQTT Broker:     " + _mqttBroker + "\n";
+    output += "MQTT Port:       " + String(_mqttPort) + "\n";
+    output += "MQTT Topic:      " + _mqtt_topic + "\n";
+    output += "Read period:     " + String(_read_period) + " seconds";
     return output;
   }
 

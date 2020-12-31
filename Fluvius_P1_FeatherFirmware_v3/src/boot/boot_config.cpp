@@ -1,9 +1,8 @@
 #include "boot_config.h"
 #include "../helpers/serial_helper.h"
+#include "boot_wizard.h"
 
 // TODO - Add option for using DHCP (boolean)
-// TODO - Allow wizard to be started
-// TODO - Reset to Defaults option
 
 namespace SmartMeter {
 
@@ -39,7 +38,7 @@ namespace SmartMeter {
           break;
 
         case 4:
-          userSerial->println("TODO - Use Configuration Wizard - NOT IMPLEMENTED YET!!!");
+          configure_wizard();
           break;
 
         case 5:
@@ -71,7 +70,7 @@ namespace SmartMeter {
       userSerial->println("1. Change Network/WiFi settings");
       userSerial->println("2. Change MQTT settings");
       userSerial->println("3. Change Meter settings");
-      userSerial->println("4. TODO - Use Configuration Wizard");
+      userSerial->println("4. Use Configuration Wizard");
       userSerial->println("5. Restore Factory Defaults");
       userSerial->println("6. Save & Continue Boot");
       userSerial->println("7. Discard & Continue Boot");
@@ -211,6 +210,11 @@ namespace SmartMeter {
     if (input == "y") {
       newConfig = Configuration();
     }
+  }
+
+  void BootConfig::configure_wizard(void){
+      BootWizard bootWizard(originalConfig, userSerial);
+      newConfig = bootWizard.RunWizard();
   }
 
 }

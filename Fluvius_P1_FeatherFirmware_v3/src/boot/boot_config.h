@@ -48,6 +48,9 @@ namespace SmartMeter {
       void restore_factory_defaults(void);
 
     private:
+      void configure_wizard(void);
+
+    private:
       // String request_input(String info, String current_value, Validator * validator=nullptr);
 
     public:

@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "../config/configuration.h"
+#include "../config/helpers/user_config_input_helper.h"
 
 namespace SmartMeter {
 
@@ -11,16 +12,16 @@ namespace SmartMeter {
       BootWizard(Configuration currentConfig, HardwareSerial * userSerial);
 
     public:
-      Configuration RunWizard();  
+      Configuration RunWizard(void);  
 
     private:
       void reset_new_config(void);  
     
     public:
-      // the use of original and new config is only relevant is we put a option in the wizard not to save changes.
       Configuration originalConfig;
       Configuration newConfig;
       HardwareSerial * userSerial;
+      UserConfigInputHelper userConfigInputHelper;
   };
 
 };

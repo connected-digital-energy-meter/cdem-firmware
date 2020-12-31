@@ -1,6 +1,7 @@
 #include "boot_manager.h"
 #include "../../hardware.h"
 #include "boot_config.h"
+#include "boot_wizard.h"
 
 namespace SmartMeter {
 
@@ -17,8 +18,18 @@ namespace SmartMeter {
       SerialDebug.println("No existing configuration could be loaded");
       SerialDebug.println("Saving factory default configuration");
       configManager.factory_default();
-      // save_config();
-      // TODO Show config wizard !
+      
+      BootWizard bootWizard(configManager.current_config(), &SerialDebug);
+      Configuration config = bootWizard.RunWizard();
+      
+      if (config != this->configManager.current_config()) {
+        SerialDebug.println("Device configuration has changed. Saving it ...");
+        configManager.current_config(config);
+        save_config();
+      } else {
+        SerialDebug.println("Device configuration is not altered. No need for saving it.");
+      }
+
     }
 
     SerialDebug.println("Hold the touch if you wish to boot into boot menu");

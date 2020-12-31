@@ -27,7 +27,7 @@ namespace SmartMeter {
       void configure_device_read_period(Configuration * config);
 
     private:
-      String request_input(String info, String current_value, Validator * validator=nullptr);
+      String request_input(String info, String current_value, Validator * validator=nullptr, String expectedFormat="");
 
     private:
       HardwareSerial * userSerial;

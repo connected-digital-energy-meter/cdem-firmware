@@ -1,5 +1,6 @@
 #include "user_config_input_helper.h"
 #include "../../validation/number_validator.h"
+#include "../../validation/ip_validator.h"
 #include "../../helpers/serial_helper.h"
 
 namespace SmartMeter {
@@ -17,27 +18,53 @@ namespace SmartMeter {
   }
 
   void UserConfigInputHelper::configure_static_ip(Configuration * config) {
-    config->static_ip(request_input("Network Static IP", config->static_ip()));
+    IpValidator validator;
+    config->static_ip(request_input("Network Static IP",
+                                    config->static_ip(),
+                                    &validator,
+                                    "[0-255].[0-255].[0-255].[0-255] - Example 192.168.1.20"
+                                    ));
   }
 
   void UserConfigInputHelper::configure_subnet_mask(Configuration * config) {
-    config->subnet_mask(request_input("Network Subnet Mask", config->subnet_mask()));
+    IpValidator validator;
+    config->subnet_mask(request_input("Network Subnet Mask",
+                                    config->subnet_mask(),
+                                    &validator,
+                                    "[0-255].[0-255].[0-255].[0-255] - Example 255.255.0.0"
+                                    ));
   }
 
   void UserConfigInputHelper::configure_default_gateway(Configuration * config) {
-    config->default_gateway(request_input("Network Default Gateway", config->default_gateway()));
+    IpValidator validator;
+    config->default_gateway(request_input("Network Default Gateway",
+                                    config->default_gateway(),
+                                    &validator,
+                                    "[0-255].[0-255].[0-255].[0-255] - Example 192.168.0.1"
+                                    ));
   }
 
   void UserConfigInputHelper::configure_mqtt_broker(Configuration * config) {
-    config->mqtt_broker(request_input("MQTT Broker IP", config->mqtt_broker()));
+    IpValidator validator;
+    config->mqtt_broker(request_input("MQTT Broker IP",
+                                    config->mqtt_broker(),
+                                    &validator,
+                                    "[0-255].[0-255].[0-255].[0-255] - Example 192.168.1.1"
+                                    ));
   }
 
   void UserConfigInputHelper::configure_mqtt_broker_port(Configuration * config) {
-    int port = atoi(request_input("MQTT Broker Port", String(config->mqtt_port())).c_str());
+    NumberValidator validator(1, 65353);
+    unsigned int port = atoi(request_input( "MQTT Broker Port",
+                                              String(config->mqtt_port()),
+                                              &validator,
+                                              "[1-65353] - Example 1883"
+                                            ).c_str());
     config->mqtt_port(port);
   }
 
   void UserConfigInputHelper::configure_mqtt_topic(Configuration * config) {
+    // TODO - Validation + Example
     config->mqtt_topic(request_input("MQTT Broker Topic", config->mqtt_topic()));
   }
 
@@ -45,19 +72,23 @@ namespace SmartMeter {
     NumberValidator validator(1, 3600);
     unsigned int period = atoi(request_input( "Meter Read Period (seconds)",
                                               String(config->read_period()),
-                                              &validator
+                                              &validator,
+                                              "[1-3600] - Example 10"
                                             ).c_str());
     config->read_period(period);
   }
 
-  String UserConfigInputHelper::request_input(String key, String value, Validator * validator) {
+  String UserConfigInputHelper::request_input(String key, String value, Validator * validator, String expectedFormat) {
     bool valid = false;
     String input = "";
     do {
       userSerial->println("");
-      userSerial->println("Current " + key + " is " + value);
       userSerial->println("Provide new value for " + key + " or just enter to keep current value.");
-      userSerial->println(key + ": ");
+      if (expectedFormat != "") {
+        userSerial->println("Expected input format: " + expectedFormat);
+      }
+      userSerial->println("");
+      userSerial->println(key + " [" + value + "]: ");
       input = SerialHelper::read_line(userSerial);
       userSerial->println("");
 

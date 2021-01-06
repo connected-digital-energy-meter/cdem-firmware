@@ -12,6 +12,8 @@ namespace SmartMeter {
     SerialMeter.begin(METER_BAUDRATE);
     pinMode(REQUEST_PIN, OUTPUT);
     meter.disable();
+    // publisher.on_mqtt_event()
+    publisher.on_mqtt_event(std::bind(&SmartDigitalMeter::on_mqtt_event, this, std::placeholders::_1));
   }
 
   void SmartDigitalMeter::start(Configuration * config) {
@@ -69,6 +71,16 @@ namespace SmartMeter {
           startMillis = currentMillis;
           break;
       }
+    }
+  }
+
+  void SmartDigitalMeter::on_mqtt_event(DatagramPublisher::MqttEvent event) {
+    if (event == DatagramPublisher::MqttEvent::CONNECTED) {
+      SerialDebug.println("Detected MQTT connection.");
+      // led green
+    } else if (event == DatagramPublisher::MqttEvent::DISCONNECTED) {
+      SerialDebug.println("Lost the MQTT connection.");
+      // led red
     }
   }
 

@@ -18,6 +18,9 @@ namespace SmartMeter {
       void process(void);   // Call this in loop()
 
     private:
+      void on_mqtt_event(DatagramPublisher::MqttEvent event);
+
+    private:
       // Define a program state class
       enum class State {
         IDLE,

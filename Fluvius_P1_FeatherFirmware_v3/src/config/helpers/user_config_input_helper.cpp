@@ -2,6 +2,7 @@
 #include "../../validation/number_validator.h"
 #include "../../validation/ip_validator.h"
 #include "../../validation/choice_validator.h"
+#include "../../validation/mqtt_topic_validator.h"
 #include "../../helpers/serial_helper.h"
 
 namespace SmartMeter {
@@ -80,8 +81,12 @@ namespace SmartMeter {
   }
 
   void UserConfigInputHelper::configure_mqtt_topic(Configuration * config) {
-    // TODO - Validation + Example
-    config->mqtt_topic(request_input("MQTT Broker Topic", config->mqtt_topic()));
+    MqttTopicValidator validator;
+    config->mqtt_topic(request_input("MQTT Broker Topic",
+                                    config->mqtt_topic(),
+                                    &validator,
+                                    "level/level/level - myhome/metering/smartmeter"
+                                    ));
   }
 
   void UserConfigInputHelper::configure_device_read_period(Configuration * config) {

@@ -14,9 +14,13 @@ namespace SmartMeter {
     }
 
     Configuration BootWizard::RunWizard(void) {
+        userSerial->println("");
+        userSerial->println("#############################");
+        userSerial->println("# Smart Meter Config Wizard #");
+        userSerial->println("#############################");
+        userSerial->println("");
         userSerial->println("First let us configure your Wifi connection.");
         userSerial->println("-----------");
-        userSerial->println("");
         userConfigInputHelper.configure_wifi_ssid(&newConfig);
         userSerial->println("");
         userConfigInputHelper.configure_wifi_password(&newConfig);
@@ -32,7 +36,7 @@ namespace SmartMeter {
         userConfigInputHelper.configure_default_gateway(&newConfig);
         userSerial->println("");
         userSerial->println("This device will post it's data to a MQTT broker.");
-        userSerial->println("In order to do this we will need the IP-adress and port of your MQTT broker.");
+        userSerial->println("In order to do this we will need the IP-address and port of your MQTT broker.");
         userSerial->println("We also need the base topic in your MQTT broker where we should post the data.");
         userSerial->println("-----------");
         userSerial->println("");

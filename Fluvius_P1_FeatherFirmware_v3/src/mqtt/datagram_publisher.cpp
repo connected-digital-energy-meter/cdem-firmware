@@ -36,6 +36,11 @@ namespace SmartMeter {
   }
 
   void DatagramPublisher::connect(void) {
+    if (_connected) {
+      DebugLn("DGP - Already connected.");
+      disconnect();
+    }
+
     _shouldBeConnected = true;
     DebugLn("DGP - Connecting to MQTT broker");
     mqttClient.connect();
@@ -59,9 +64,7 @@ namespace SmartMeter {
     DebugLn("DGP - Disconnected from MQTT broker - Reason " + String((uint8_t)reason));
 
     if (reason == AsyncMqttClientDisconnectReason::TCP_DISCONNECTED) {
-      DebugLn("DGP - Broker unreachable. Stopping reconnect.");
-      _shouldBeConnected = false;
-      return;
+      DebugLn("DGP - Broker unreachable.");
     }
 
     if (_shouldBeConnected) {

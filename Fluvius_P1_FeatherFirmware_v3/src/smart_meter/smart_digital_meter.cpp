@@ -18,7 +18,6 @@ namespace SmartMeter {
     this->period = config->read_period() * 1000;
     publisher.connect(config->mqtt_broker(), config->mqtt_port());
 
-    // if connected:    // TODO
     isAcquiringData = true;
 
     // Start time for period

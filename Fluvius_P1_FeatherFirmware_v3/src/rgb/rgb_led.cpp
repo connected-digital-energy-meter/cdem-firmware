@@ -3,11 +3,12 @@
 
 namespace SmartMeter {
 
-  RgbLed::RgbLed(int pinRed, int pinGreen, int pinBlue, int firstChannel) {
+  RgbLed::RgbLed(int pinRed, int pinGreen, int pinBlue, int firstChannel, bool inverted) {
     _pinRed = pinRed;
     _pinGreen = pinGreen;
     _pinBlue = pinBlue;
     _firstChannel = firstChannel;
+    _inverted = inverted;
     
     init_channel(_pinRed, _firstChannel);
     init_channel(_pinGreen, _firstChannel+1);
@@ -39,9 +40,15 @@ namespace SmartMeter {
   }
 
   void RgbLed::write_color(Color color) {
-    ledcWrite(_firstChannel, color.red());
-    ledcWrite(_firstChannel+1, color.green());
-    ledcWrite(_firstChannel+2, color.blue());
+    if (_inverted) {
+      ledcWrite(_firstChannel, 255-color.red());
+      ledcWrite(_firstChannel+1, 255-color.green());
+      ledcWrite(_firstChannel+2, 255-color.blue());
+    } else {
+      ledcWrite(_firstChannel, color.red());
+      ledcWrite(_firstChannel+1, color.green());
+      ledcWrite(_firstChannel+2, color.blue());
+    }
   }
 
 };

@@ -22,7 +22,7 @@
 using namespace SmartMeter;
 
 // Setup the RGB led's on the PCB
-RgbLed commLed(COMM_LED_R, COMM_LED_G, COMM_LED_B, 1);
+RgbLed commLed(COMM_LED_R, COMM_LED_G, COMM_LED_B, 1, true);
 
 // Predefine some colors
 Color NoWifiColor(Color::RED().dim(20));

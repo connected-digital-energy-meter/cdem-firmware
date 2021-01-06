@@ -44,6 +44,8 @@ namespace SmartMeter {
         userSerial->println("");
         userConfigInputHelper.configure_mqtt_broker_port(&newConfig);
         userSerial->println("");
+        userConfigInputHelper.configure_mqtt_topic(&newConfig);
+        userSerial->println("");
         userSerial->println("Finaly we need the read period you want to upload your data to the MQTT broker.");
         userSerial->println("-----------");
         userSerial->println("");

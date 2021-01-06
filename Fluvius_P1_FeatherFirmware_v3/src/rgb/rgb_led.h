@@ -14,7 +14,7 @@ namespace SmartMeter {
   class RgbLed {
 
     public:
-      RgbLed(int pinRed, int pinGreen, int pinBlue, int firstChannel);
+      RgbLed(int pinRed, int pinGreen, int pinBlue, int firstChannel, bool inverted=false);
 
     public:
       void color(Color color);
@@ -32,6 +32,7 @@ namespace SmartMeter {
       int _pinBlue;
       int _firstChannel;
       Color _color;
+      bool _inverted = false;
 
   };
 };

@@ -9,8 +9,9 @@
 #pragma once
 
 #include <Arduino.h>
-// #include "rgb_led.h"
-// #include "variables_and_classes.h"
+#include "../../hardware.h"
+#include "../rgb/rgb_led.h"
+
 
 namespace SmartMeter {
 
@@ -22,6 +23,7 @@ namespace SmartMeter {
     public:
       void enable(void);
       void disable(void);
+      void timeout(void);
 
     public:
       // Non-blocking function that tries to read some
@@ -39,10 +41,10 @@ namespace SmartMeter {
 
       unsigned int readPointer = 0;
       bool startDetected = false;
-      // RgbLed dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4);
-      // Color EnableMeterColor(Color::BLUE().dim(20));
-      // Color DisableMeterColor(Color::BLACK());
-
+      RgbLed dataLed;
+      Color EnableMeterColor(Color::BLUE().dim(20));
+      Color DisableMeterColor(Color::BLACK());
+      Color ErrorMeterColor(Color::RED().dim(20));
   };
 
 };

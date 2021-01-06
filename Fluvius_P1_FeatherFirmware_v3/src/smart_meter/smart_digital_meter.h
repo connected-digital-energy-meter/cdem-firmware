@@ -38,6 +38,7 @@ namespace SmartMeter {
       long period = 10000L;      // TODO - Make config option
       unsigned long startMillis;            
       unsigned long currentMillis;
+      unsigned long timeout;
 
       // Declare State and set state to IDLE
       State currentState = State::IDLE;

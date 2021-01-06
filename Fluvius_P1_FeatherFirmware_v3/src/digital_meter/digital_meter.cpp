@@ -1,23 +1,24 @@
 #include "digital_meter.h"
 #include "crc_checker.h"
-// #include "rgb_led.h"
+#include "../rgb/rgb_led.h"
 
 namespace SmartMeter {
 
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
 
-  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial) {
+  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial)
+  :dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4, true) {
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
-    // dataLed.on();
+    dataLed.on();
   }
 
   void DigitalMeter::enable(void) {
     DebugLn("Enabling the digital meter data request");
     digitalWrite(requestPin, HIGH);
-    // dataLed.color(EnableMeterColor);
+    dataLed.color(EnableMeterColor);
     readPointer = 0;
     startDetected = false;
   }
@@ -25,7 +26,15 @@ namespace SmartMeter {
   void DigitalMeter::disable(void) {
     DebugLn("Disabling the digital meter data request");
     digitalWrite(requestPin, LOW);
-    // dataLed.color(DisableMeterColor);
+    dataLed.color(DisableMeterColor);
+  }
+
+  void DigitalMeter::timeout(void) {
+    digitalWrite(requestPin, LOW);
+    dataLed.color(ErrorMeterColor);
+    SerialDebug.println("Communication with the smartmeter timed out!");
+    delay(60000);
+    dataLed.color(DisableMeterColor);
   }
 
   // Read a new datagram from the P1 port

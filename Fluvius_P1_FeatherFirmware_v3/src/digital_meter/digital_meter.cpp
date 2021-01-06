@@ -1,31 +1,36 @@
 #include "digital_meter.h"
 #include "crc_checker.h"
-// #include "rgb_led.h"
+#include "../rgb/rgb_led.h"
 
 namespace SmartMeter {
 
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
 
-  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial) {
+  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial)
+  :dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4, true) , ReadyMeterColor(Color::GREEN().dim(20)) , ErrorMeterColor(Color::RED().dim(20)) {
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
-    // dataLed.on();
+    dataLed.clear();
   }
 
   void DigitalMeter::enable(void) {
     DebugLn("Enabling the digital meter data request");
     digitalWrite(requestPin, HIGH);
-    // dataLed.color(EnableMeterColor);
     readPointer = 0;
     startDetected = false;
   }
 
   void DigitalMeter::disable(void) {
     DebugLn("Disabling the digital meter data request");
+    digitalWrite(requestPin, LOW);    
+  }
+
+  void DigitalMeter::timeout(void) {
     digitalWrite(requestPin, LOW);
-    // dataLed.color(DisableMeterColor);
+    dataLed.color(ErrorMeterColor);
+    SerialDebug.println("Communication with the smartmeter timed out!");        
   }
 
   // Read a new datagram from the P1 port
@@ -55,6 +60,7 @@ namespace SmartMeter {
           DebugLn("Checking datagram CRC");
           if (CrcChecker::check_crc(buffer, readPointer)) {
             DebugLn("Datagram is valid");
+            dataLed.color(ReadyMeterColor);
             return true;
           } else {
             DebugLn("Datagram is invalid - CRC Check Failed");

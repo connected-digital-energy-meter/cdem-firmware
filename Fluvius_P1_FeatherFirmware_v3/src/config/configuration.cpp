@@ -9,6 +9,7 @@ namespace SmartMeter {
     mqtt_broker(MQTT_DEFAULT_BROKER);
     mqtt_port(MQTT_DEFAULT_PORT);
     mqtt_topic(MQTT_DEFAULT_TOPIC);
+    use_dhcp(NETWORK_USE_DHCP);
     static_ip(NETWORK_DEFAULT_IP);
     default_gateway(NETWORK_DEFAULT_GATEWAY);
     subnet_mask(NETWORK_DEFAULT_SUBNET);
@@ -54,6 +55,14 @@ namespace SmartMeter {
   String Configuration::mqtt_topic(void) {
     return _mqtt_topic;
   }
+
+  void Configuration::use_dhcp(bool useDhcp) {
+    _use_dhcp = useDhcp;
+  }
+
+  bool Configuration::use_dhcp(void) {
+    return _use_dhcp;
+  }
       
   void Configuration::static_ip(String ip) {
     _static_ip = ip;
@@ -91,6 +100,7 @@ namespace SmartMeter {
     String output = "";
     output += "WiFi SSID:       " + _wifiSSID + "\n";
     output += "WiFi Password:   " + _wifiPassword + "\n";
+    output += "Use DHCP?:       " + String(_use_dhcp ? "yes" : "no") + "\n";
     output += "Static IP:       " + _static_ip + "\n";
     output += "Subnet Mask:     " + _subnet_mask + "\n";
     output += "Default Gateway: " + _default_gateway + "\n";
@@ -108,6 +118,7 @@ namespace SmartMeter {
       _mqttBroker == rhs._mqttBroker &&
       _mqttPort == rhs._mqttPort &&
       _mqtt_topic == rhs._mqtt_topic &&
+      _use_dhcp == rhs._use_dhcp &&
       _static_ip == rhs._static_ip &&
       _subnet_mask == rhs._subnet_mask &&
       _default_gateway == rhs._default_gateway &&

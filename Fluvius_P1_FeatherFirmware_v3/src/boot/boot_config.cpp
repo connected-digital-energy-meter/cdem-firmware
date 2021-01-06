@@ -95,16 +95,19 @@ namespace SmartMeter {
           userConfigInputHelper.configure_wifi_password(&newConfig);
           break;
         case 3:
-          userConfigInputHelper.configure_static_ip(&newConfig);
+          userConfigInputHelper.configure_use_dhcp(&newConfig);
           break;
         case 4:
-          userConfigInputHelper.configure_subnet_mask(&newConfig);
+          userConfigInputHelper.configure_static_ip(&newConfig);
           break;
         case 5:
+          userConfigInputHelper.configure_subnet_mask(&newConfig);
+          break;
+        case 6:
           userConfigInputHelper.configure_default_gateway(&newConfig);
           break;
       }
-    } while (selection != 6);
+    } while (selection != 7);
   }
 
   int BootConfig::request_network_menu_selection(void) {
@@ -116,15 +119,16 @@ namespace SmartMeter {
       userSerial->println("------------------");
       userSerial->println("1. Change WiFi SSID [" + newConfig.wifi_ssid() + "]");
       userSerial->println("2. Change WiFi Password [" + newConfig.wifi_password() + "]");
-      userSerial->println("3. Change Static IP [" + newConfig.static_ip() + "]");
-      userSerial->println("4. Change Subnet Mask [" + newConfig.subnet_mask() + "]");
-      userSerial->println("5. Change Default Gateway [" + newConfig.default_gateway() + "]");
-      userSerial->println("6. Return");
+      userSerial->println("3. Use DHCP? [" + String(newConfig.use_dhcp() ? "yes" : "no") + "]");
+      userSerial->println("4. Change Static IP [" + newConfig.static_ip() + "]");
+      userSerial->println("5. Change Subnet Mask [" + newConfig.subnet_mask() + "]");
+      userSerial->println("6. Change Default Gateway [" + newConfig.default_gateway() + "]");
+      userSerial->println("7. Return");
       userSerial->println("");
-      userSerial->print("Please pick an option [1-6]: ");
+      userSerial->print("Please pick an option [1-7]: ");
       choice = atoi(SerialHelper::read_line(userSerial).c_str());
       userSerial->println("");
-    } while (choice < 1 && choice > 6);
+    } while (choice < 1 && choice > 7);
 
     return choice;
   }

@@ -29,11 +29,15 @@ namespace SmartMeter {
         userSerial->println("-----------");
         userSerial->println("");
         userSerial->println("");
-        userConfigInputHelper.configure_static_ip(&newConfig);
-        userSerial->println("");
-        userConfigInputHelper.configure_subnet_mask(&newConfig);
-        userSerial->println("");
-        userConfigInputHelper.configure_default_gateway(&newConfig);
+        userConfigInputHelper.configure_use_dhcp(&newConfig);
+        if (!newConfig.use_dhcp()) {
+          userSerial->println("");
+          userConfigInputHelper.configure_static_ip(&newConfig);
+          userSerial->println("");
+          userConfigInputHelper.configure_subnet_mask(&newConfig);
+          userSerial->println("");
+          userConfigInputHelper.configure_default_gateway(&newConfig);
+        }
         userSerial->println("");
         userSerial->println("This device will post it's data to a MQTT broker.");
         userSerial->println("In order to do this we will need the IP-address and port of your MQTT broker.");

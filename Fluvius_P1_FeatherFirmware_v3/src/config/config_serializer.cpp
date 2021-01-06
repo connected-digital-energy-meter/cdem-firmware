@@ -4,11 +4,12 @@ namespace SmartMeter {
 
   size_t ConfigSerializer::serialize(char * buffer, size_t size, Configuration * config) {
     size_t neededSpace =
-        config->wifi_ssid().length() + 1
+        config->wifi_ssid().length() + 1      // +1's are for strings
       + config->wifi_password().length() + 1
       + config->mqtt_broker().length() + 1
       + sizeof(config->mqtt_port())
       + config->mqtt_topic().length() + 1
+      + sizeof(config->use_dhcp())
       + config->static_ip().length() + 1
       + config->subnet_mask().length() + 1
       + config->default_gateway().length() + 1
@@ -27,6 +28,7 @@ namespace SmartMeter {
     pBuffer += serialize_string(pBuffer, config->mqtt_broker());
     pBuffer += serialize_primitive(pBuffer, config->mqtt_port());
     pBuffer += serialize_string(pBuffer, config->mqtt_topic());
+    pBuffer += serialize_primitive(pBuffer, config->use_dhcp());
     pBuffer += serialize_string(pBuffer, config->static_ip());
     pBuffer += serialize_string(pBuffer, config->subnet_mask());
     pBuffer += serialize_string(pBuffer, config->default_gateway());
@@ -53,6 +55,10 @@ namespace SmartMeter {
 
     config->mqtt_topic(String(pBuffer));
     pBuffer += config->mqtt_topic().length() + 1;
+
+    bool useDhcp = false;
+    pBuffer += deserialize_primitive(pBuffer, &useDhcp);
+    config->use_dhcp(useDhcp);
 
     config->static_ip(String(pBuffer));
     pBuffer += config->static_ip().length() + 1;
@@ -90,6 +96,11 @@ namespace SmartMeter {
     return sizeof(value);
   }
 
+  size_t ConfigSerializer::serialize_primitive(char * buffer, bool value) {
+    memcpy(buffer, (char*)(&value), sizeof(value));
+    return sizeof(value);
+  }
+
   size_t ConfigSerializer::deserialize_primitive(char * buffer, int * value) {
     memcpy((char*)(value), buffer, sizeof(*value));
     return sizeof(*value);
@@ -101,6 +112,11 @@ namespace SmartMeter {
   }
 
   size_t ConfigSerializer::deserialize_primitive(char * buffer, unsigned int * value) {
+    memcpy((char*)(value), buffer, sizeof(*value));
+    return sizeof(*value);
+  }
+
+  size_t ConfigSerializer::deserialize_primitive(char * buffer, bool * value) {
     memcpy((char*)(value), buffer, sizeof(*value));
     return sizeof(*value);
   }

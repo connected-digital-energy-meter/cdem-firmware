@@ -35,7 +35,7 @@ namespace SmartMeter {
       bool hasEepromBeenInitialized = false;
 
       static const size_t SIZE = 128;
-      static const uint16_t IDENTIFIER = 0xDEBB;
+      static const uint16_t IDENTIFIER = 0xDECB;
   };
 
 };

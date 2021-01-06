@@ -14,6 +14,7 @@ namespace SmartMeter {
     public:
       void configure_wifi_ssid(Configuration * config);
       void configure_wifi_password(Configuration * config);
+      void configure_use_dhcp(Configuration * config);
       void configure_static_ip(Configuration * config);
       void configure_subnet_mask(Configuration * config);
       void configure_default_gateway(Configuration * config);

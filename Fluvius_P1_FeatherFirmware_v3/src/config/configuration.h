@@ -25,6 +25,9 @@ namespace SmartMeter {
       void mqtt_topic(String topic);
       String mqtt_topic(void);
       
+      void use_dhcp(bool useDhcp);
+      bool use_dhcp(void);
+      
       void static_ip(String ip);
       String static_ip(void);
       
@@ -50,6 +53,7 @@ namespace SmartMeter {
       String _mqttBroker;
       int _mqttPort;
       String _mqtt_topic;
+      bool _use_dhcp;
       String _static_ip;
       String _subnet_mask;
       String _default_gateway;

@@ -1,6 +1,7 @@
 #include "user_config_input_helper.h"
 #include "../../validation/number_validator.h"
 #include "../../validation/ip_validator.h"
+#include "../../validation/choice_validator.h"
 #include "../../helpers/serial_helper.h"
 
 namespace SmartMeter {
@@ -15,6 +16,21 @@ namespace SmartMeter {
 
   void UserConfigInputHelper::configure_wifi_password(Configuration * config) {
     config->wifi_password(request_input("Wifi Password", config->wifi_password()));
+  }
+
+  void UserConfigInputHelper::configure_use_dhcp(Configuration * config) {
+    std::vector<String> options;
+    options.push_back("yes");
+    options.push_back("no");
+
+    ChoiceValidator validator(options, false);
+    String useDhcp = request_input("Use DHCP?",
+                                    String(config->use_dhcp() ? "yes" : "no"),
+                                    &validator,
+                                    "[yes|no]"
+                                    );
+    useDhcp.toLowerCase();
+    config->use_dhcp(useDhcp == "yes");
   }
 
   void UserConfigInputHelper::configure_static_ip(Configuration * config) {

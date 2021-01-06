@@ -24,10 +24,12 @@ namespace SmartMeter {
       static size_t serialize_primitive(char * buffer, int value);
       static size_t serialize_primitive(char * buffer, long value);
       static size_t serialize_primitive(char * buffer, unsigned int value);
+      static size_t serialize_primitive(char * buffer, bool value);
 
       static size_t deserialize_primitive(char * buffer, int * value);
       static size_t deserialize_primitive(char * buffer, long * value);
       static size_t deserialize_primitive(char * buffer, unsigned int * value);
+      static size_t deserialize_primitive(char * buffer, bool * value);
   };
 
 };

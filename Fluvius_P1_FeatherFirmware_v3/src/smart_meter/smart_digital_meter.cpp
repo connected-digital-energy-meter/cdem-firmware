@@ -12,7 +12,6 @@ namespace SmartMeter {
     SerialMeter.begin(METER_BAUDRATE);
     pinMode(REQUEST_PIN, OUTPUT);
     meter.disable();
-    // publisher.on_mqtt_event()
     publisher.on_mqtt_event(std::bind(&SmartDigitalMeter::on_mqtt_event, this, std::placeholders::_1));
   }
 

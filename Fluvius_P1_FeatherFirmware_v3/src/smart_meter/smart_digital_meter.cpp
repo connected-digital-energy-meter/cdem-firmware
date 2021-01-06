@@ -46,9 +46,10 @@ namespace SmartMeter {
         case State::READING_DATAGRAM:
           if (meter.read_datagram(datagramBuffer, sizeof(datagramBuffer))) {
             currentState = State::DATAGRAM_READY;
-          } else if((timeout-millis())>5000){
-            meter.timeout();
+          } else if((millis()-timeout)>1000){
+            meter.timeout();            
             currentState = State::IDLE;
+            startMillis = currentMillis;
           }
           break;
         // Stop requesting data

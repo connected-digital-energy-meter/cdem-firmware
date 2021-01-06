@@ -42,9 +42,8 @@ namespace SmartMeter {
       unsigned int readPointer = 0;
       bool startDetected = false;
       RgbLed dataLed;
-      Color EnableMeterColor(Color::BLUE().dim(20));
-      Color DisableMeterColor(Color::BLACK());
-      Color ErrorMeterColor(Color::RED().dim(20));
+      Color ReadyMeterColor;      
+      Color ErrorMeterColor;
   };
 
 };

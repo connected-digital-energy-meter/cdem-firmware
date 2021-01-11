@@ -12,6 +12,7 @@ namespace SmartMeter {
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
+    pinMode(requestPin, OUTPUT);
     dataLed.clear();
   }
 

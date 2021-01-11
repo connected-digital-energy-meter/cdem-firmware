@@ -26,6 +26,7 @@ namespace SmartMeter {
 
   void SmartDigitalMeter::stop(void) {
     isAcquiringData = false;
+    publisher.disconnect();
   }
 
   void SmartDigitalMeter::process(void) {

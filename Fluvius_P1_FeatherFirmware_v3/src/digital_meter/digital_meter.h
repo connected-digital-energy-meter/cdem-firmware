@@ -41,9 +41,6 @@ namespace SmartMeter {
 
       unsigned int readPointer = 0;
       bool startDetected = false;
-      RgbLed dataLed;
-      Color ReadyMeterColor;      
-      Color ErrorMeterColor;
   };
 
 };

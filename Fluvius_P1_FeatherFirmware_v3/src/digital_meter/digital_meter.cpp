@@ -7,13 +7,12 @@ namespace SmartMeter {
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
 
-  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial)
-  :dataLed(DATA_LED_R, DATA_LED_G, DATA_LED_B, 4, true) , ReadyMeterColor(Color::GREEN().dim(20)) , ErrorMeterColor(Color::RED().dim(20)) {
+  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial) {
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
     pinMode(requestPin, OUTPUT);
-    dataLed.clear();
+    // dataLed.clear();
   }
 
   void DigitalMeter::enable(void) {
@@ -30,7 +29,7 @@ namespace SmartMeter {
 
   void DigitalMeter::timeout(void) {
     digitalWrite(requestPin, LOW);
-    dataLed.color(ErrorMeterColor);
+    // dataLed.color(ErrorMeterColor);
     SerialDebug.println("Communication with the smartmeter timed out!");        
   }
 
@@ -61,7 +60,7 @@ namespace SmartMeter {
           DebugLn("Checking datagram CRC");
           if (CrcChecker::check_crc(buffer, readPointer)) {
             DebugLn("Datagram is valid");
-            dataLed.color(ReadyMeterColor);
+            // dataLed.color(ReadyMeterColor);
             return true;
           } else {
             DebugLn("Datagram is invalid - CRC Check Failed");

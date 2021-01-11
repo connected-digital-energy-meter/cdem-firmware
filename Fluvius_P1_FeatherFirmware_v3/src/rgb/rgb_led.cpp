@@ -41,13 +41,14 @@ namespace SmartMeter {
 
   void RgbLed::write_color(Color color) {
     if (_inverted) {
-      ledcWrite(_firstChannel, 255-color.red());
-      ledcWrite(_firstChannel+1, 255-color.green());
-      ledcWrite(_firstChannel+2, 255-color.blue());
+      // Why 256 ? Fix for https://github.com/espressif/arduino-esp32/issues/689
+      ledcWrite(_firstChannel, (color.red() ? 255-color.red() : 256));
+      ledcWrite(_firstChannel+1, (color.green() ? 255-color.green() : 256));
+      ledcWrite(_firstChannel+2, (color.blue() ? 255-color.blue() : 256));
     } else {
-      ledcWrite(_firstChannel, color.red());
-      ledcWrite(_firstChannel+1, color.green());
-      ledcWrite(_firstChannel+2, color.blue());
+      ledcWrite(_firstChannel, (color.red() ? color.red() : 256));
+      ledcWrite(_firstChannel+1, (color.green() ? color.green() : 256));
+      ledcWrite(_firstChannel+2, (color.blue() ? color.blue() : 256));
     }
   }
 

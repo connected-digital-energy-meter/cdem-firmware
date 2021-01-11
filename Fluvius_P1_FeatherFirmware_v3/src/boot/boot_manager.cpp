@@ -2,6 +2,7 @@
 #include "../../hardware.h"
 #include "boot_config.h"
 #include "boot_wizard.h"
+#include "../helpers/serial_helper.h"
 
 namespace SmartMeter {
 
@@ -19,8 +20,26 @@ namespace SmartMeter {
       SerialDebug.println("Booting configuration wizard ...");
       configManager.factory_default();
       
+      // run config wizzard
       BootWizard bootWizard(configManager.current_config(), &SerialDebug);
-      Configuration config = bootWizard.RunWizard();
+      bool save=false;
+      String input = "";
+      Configuration config;
+      do{
+        config = bootWizard.RunWizard();
+        SerialDebug.println(config.to_string());
+        do {
+          SerialDebug.println("Are you sure you wish to save this configuration? [y/N]");
+          input = SerialHelper::read_line(&SerialDebug);
+          input.toLowerCase();
+          SerialDebug.println("");
+        } while (input != "y" && input != "n" && input != "");
+
+        if (input == "y") {
+          save=true;
+        }
+
+      } while(!save);
 
       // This point will only be reached once the user has stepped through
       // the configuration wizard. So here we have to save.

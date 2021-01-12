@@ -17,6 +17,9 @@ namespace SmartMeter {
 
   void SmartDigitalMeter::start(Configuration * config) {
     this->period = config->read_period() * 1000;
+    
+    deviceStatus->meter_starting();
+
     publisher.connect(config->mqtt_broker(), config->mqtt_port());
 
     isAcquiringData = true;

@@ -12,7 +12,6 @@ namespace SmartMeter {
     this->serial = serial;
     this->debugSerial = debugSerial;
     pinMode(requestPin, OUTPUT);
-    deviceStatus->meter_awaiting();
   }
 
   void DigitalMeter::enable(void) {

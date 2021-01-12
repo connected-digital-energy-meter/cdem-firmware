@@ -1,7 +1,7 @@
 /*
  * VIVES college Research
  *
- * Autor Ronny Mees & Nico De Witte
+ * Author Ronny Mees & Nico De Witte
  *
  * Class to define colors for the RGB leds on the PCB
  *

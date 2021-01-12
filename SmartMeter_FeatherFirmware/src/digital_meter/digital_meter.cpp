@@ -44,7 +44,7 @@ namespace SmartMeter {
         readPointer = 0;
         startDetected = true;
         DebugLn("Detected start of a datagram");
-        clear_buffer();
+        clear_buffer(buffer, bufferLength);
       }
 
       // Ignore all data on serial port if start was not detected

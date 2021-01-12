@@ -6,7 +6,21 @@ Only tested with a [Feather Huzzah32](https://learn.adafruit.com/adafruit-huzzah
 
 RX and TX are the additional `Serial1` pins, and are not connected to the USB/Serial converter. That means you can use them to connect to UART-devices like GPS's, fingerprint sensors, etc.
 
+## Installing Arduino
+
+See [https://www.arduino.cc/en/Guide](https://www.arduino.cc/en/Guide).
+
 ## Dependencies
+
+## Arduino core for the ESP32
+
+See [https://github.com/espressif/arduino-esp32#using-through-arduino-ide](https://github.com/espressif/arduino-esp32#using-through-arduino-ide).
+
+Install `esp32 by Espressif Systems`. Currently tested with `v1.0.4`.
+
+Open Boards Manager from `Tools => Board` menu and install `esp32 by Espressif Systems` platform. Currently tested with `v1.0.4`.
+
+Next select `Adafruit ESP32 Feather` board from `Tools => Board => ESP32 Arduino` menu after installation
 
 ### Async MQTT Client
 
@@ -17,3 +31,11 @@ Or clone the repo in the directory `Arduino/libraries` which can be found under 
 More info at [https://github.com/marvinroger/async-mqtt-client](https://github.com/marvinroger/async-mqtt-client)
 
 This library has the following dependency: [https://github.com/me-no-dev/AsyncTCP](https://github.com/me-no-dev/AsyncTCP). Install it the same way.
+
+## Problems
+
+(Linux) Python not found in path but 3.x is installed. Just set python3 as alternative:
+
+```bash
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+```

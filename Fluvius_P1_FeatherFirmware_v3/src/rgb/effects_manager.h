@@ -22,9 +22,7 @@ namespace SmartMeter {
       
     private:
       static const unsigned int TICK_MS = 10;
-      // static std::vector<Effects::Effect *> effects;
-      // Mutex mutex;
-
+      static SemaphoreHandle_t mutex;
       static std::map<String, Effects::Effect *> effects;
   };
 

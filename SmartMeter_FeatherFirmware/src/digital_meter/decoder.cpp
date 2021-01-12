@@ -3,7 +3,7 @@
 namespace SmartMeter {
 
   // TODO - There is a bug here ! Length of buffer is not taken into account
-  // and buffer is not null-terminated
+  // and buffer is not null-terminated. See issue #24
   double Decoder::parse_data_value(char* _buffer, char* key, int datablock) {
     // look for the OBIS reference
     char* position = strstr(_buffer, key);

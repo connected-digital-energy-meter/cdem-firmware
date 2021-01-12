@@ -1,8 +1,5 @@
 #pragma once
 
-// TODO - Bad name for this class but cant think of better one at the moment
-// TODO - This class allows user to configure system
-
 #include <Arduino.h>
 #include "../config/configuration.h"
 #include "../config/helpers/user_config_input_helper.h"
@@ -26,23 +23,14 @@ namespace SmartMeter {
     private:
       void configure_network(void);
       int request_network_menu_selection(void);
-      // void configure_wifi_ssid(void);
-      // void configure_wifi_password(void);
-      // void configure_static_ip(void);
-      // void configure_subnet_mask(void);
-      // void configure_default_gateway(void);
 
     private:
       void configure_mqtt(void);
       int request_mqtt_menu_selection(void);
-      // void configure_mqtt_broker(void);
-      // void configure_mqtt_broker_port(void);
-      // void configure_mqtt_topic(void);
 
     private:
       void configure_meter(void);
       int request_meter_menu_selection(void);
-      // void configure_device_read_period(void);
 
     private:
       void restore_factory_defaults(void);
@@ -50,11 +38,7 @@ namespace SmartMeter {
     private:
       void configure_wizard(void);
 
-    private:
-      // String request_input(String info, String current_value, Validator * validator=nullptr);
-
     public:
-      //variables
       Configuration originalConfig;
       Configuration newConfig;
       HardwareSerial * userSerial;

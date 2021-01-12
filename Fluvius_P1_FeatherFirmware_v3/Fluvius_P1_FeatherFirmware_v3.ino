@@ -8,7 +8,6 @@
 */
 
 // Include general libraries
-#include <cstring>
 #include <WiFi.h>
 
 // Include custom libraries

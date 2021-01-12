@@ -2,8 +2,6 @@
 #include "../helpers/serial_helper.h"
 #include "boot_wizard.h"
 
-// TODO - Add option for using DHCP (boolean)
-
 namespace SmartMeter {
 
   // Constructor

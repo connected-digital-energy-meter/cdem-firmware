@@ -65,6 +65,7 @@ void WiFiEvent(WiFiEvent_t event) {
       deviceStatus.no_communication();
       // smartMeter.stop();
       break;
+    default: break;
   }
 }
 

@@ -16,6 +16,10 @@ namespace SmartMeter {
       (void*)this, &DatagramPublisher::reconnect_timer_callback);
   }
 
+  void DatagramPublisher::on_mqtt_event(std::function<void(MqttEvent)> mqttEventCallback) {
+    this->mqttEventCallback = mqttEventCallback;
+  }
+
   void DatagramPublisher::connect(String host, uint16_t port) {
     mqttClient.setServer(host.c_str(), port);
     connect();
@@ -57,6 +61,7 @@ namespace SmartMeter {
     stop_reconnect_timer();
     _connected = true;
     DebugLn("DGP - Connected to MQTT broker");
+    if (mqttEventCallback) mqttEventCallback(MqttEvent::CONNECTED);
   }
 
   void DatagramPublisher::on_disconnected(AsyncMqttClientDisconnectReason reason) {
@@ -70,6 +75,8 @@ namespace SmartMeter {
     if (_shouldBeConnected) {
       start_reconnect_timer();
     }
+
+    if (mqttEventCallback) mqttEventCallback(MqttEvent::DISCONNECTED);
   }
 
   void DatagramPublisher::reconnect_timer_callback(TimerHandle_t timer) {

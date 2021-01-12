@@ -4,18 +4,22 @@
 #include "../digital_meter/digital_meter.h"
 #include "../mqtt/datagram_publisher.h"
 #include "../config/configuration.h"
+#include "../status/device_status.h"
 
 namespace SmartMeter {
 
   class SmartDigitalMeter {
 
     public:
-      SmartDigitalMeter(void);
+      SmartDigitalMeter(DeviceStatus * deviceStatus);
 
     public:
       void start(Configuration * config);
       void stop(void);
       void process(void);   // Call this in loop()
+
+    private:
+      void on_mqtt_event(DatagramPublisher::MqttEvent event);
 
     private:
       // Define a program state class
@@ -35,13 +39,15 @@ namespace SmartMeter {
       bool isAcquiringData = false;
 
       // Set for periodic measurement
-      long period = 10000L;      // TODO - Make config option
+      long period = 10000L;
       unsigned long startMillis;            
       unsigned long currentMillis;
       unsigned long timeout;
 
       // Declare State and set state to IDLE
       State currentState = State::IDLE;
+
+      DeviceStatus * deviceStatus;
   };
 
 };

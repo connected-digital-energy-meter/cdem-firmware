@@ -19,7 +19,7 @@ namespace SmartMeter {
 
   void RgbLed::init_channel(int pin, int channel) {
     ledcAttachPin(pin, channel);
-    ledcSetup(channel, 12000, 8);   // 12 kHz PWM, 8-bit resolution
+    ledcSetup(channel, 4000, 8);   // 4 kHz PWM, 8-bit resolution
   }
 
   void RgbLed::color(Color color) {
@@ -40,15 +40,35 @@ namespace SmartMeter {
   }
 
   void RgbLed::write_color(Color color) {
-    if (_inverted) {
-      ledcWrite(_firstChannel, 255-color.red());
-      ledcWrite(_firstChannel+1, 255-color.green());
-      ledcWrite(_firstChannel+2, 255-color.blue());
-    } else {
-      ledcWrite(_firstChannel, color.red());
-      ledcWrite(_firstChannel+1, color.green());
-      ledcWrite(_firstChannel+2, color.blue());
+
+    if (color.red()) {
+      enable_red();
     }
+
+    if (_inverted) {
+      // Why 256 ? Fix for https://github.com/espressif/arduino-esp32/issues/689
+      ledcWrite(_firstChannel, (color.red() ? 255-color.red() : 256));
+      ledcWrite(_firstChannel+1, (color.green() ? 255-color.green() : 256));
+      ledcWrite(_firstChannel+2, (color.blue() ? 255-color.blue() : 256));
+    } else {
+      ledcWrite(_firstChannel, (color.red() ? color.red() : 256));
+      ledcWrite(_firstChannel+1, (color.green() ? color.green() : 256));
+      ledcWrite(_firstChannel+2, (color.blue() ? color.blue() : 256));
+    }
+
+    if (!color.red()) {
+      disable_red();
+    }
+  }
+
+  // Bit of a hack to allow red channel to be disabled - See issue #19
+  void RgbLed::disable_red(void) {
+    ledcDetachPin(_pinRed);
+    pinMode(_pinRed, INPUT);
+  }
+
+  void RgbLed::enable_red(void) {
+    ledcAttachPin(_pinRed, _firstChannel);
   }
 
 };

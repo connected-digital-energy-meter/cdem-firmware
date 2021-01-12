@@ -1,7 +1,7 @@
 /*
  * VIVES college Research
  *
- * Autor Ronny Mees & Nico De Witte
+ * Author Ronny Mees & Nico De Witte
  *
  * Hardware settings for P1 firmware
  *
@@ -24,6 +24,11 @@
 #define COMM_LED_R 27
 #define COMM_LED_G 32
 #define COMM_LED_B 33
+
+#define LED_BRIGHTNESS 10   // Percentage
+
+// Sensitivity of Touch - Higher = more sensitive
+#define TOUCH_SENSITIVITY 30
 
 // Define a serial for debugging and for reading the meter
 #define SerialDebug Serial

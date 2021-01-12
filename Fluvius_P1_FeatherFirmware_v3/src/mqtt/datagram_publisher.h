@@ -17,7 +17,15 @@ namespace SmartMeter {
   class DatagramPublisher {
 
     public:
+      enum class MqttEvent {
+        CONNECTED, DISCONNECTED
+      };
+
+    public:
       DatagramPublisher(HardwareSerial * debugSerial=nullptr);
+
+    public:
+      void on_mqtt_event(std::function<void(MqttEvent)> mqttEventCallback);
 
     public:
       void connect(String host, uint16_t port);
@@ -50,6 +58,8 @@ namespace SmartMeter {
       bool _shouldBeConnected = false;
       TimerHandle_t reconnectTimer;
       static const unsigned int RECONNECT_TIME_MS = 10000;
+
+      std::function<void(MqttEvent)> mqttEventCallback = nullptr;
   };
 
 };

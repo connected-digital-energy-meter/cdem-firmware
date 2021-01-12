@@ -6,7 +6,8 @@
 
 namespace SmartMeter {
 
-  BootManager::BootManager(void) {
+  BootManager::BootManager(DeviceStatus * deviceStatus) {
+    this->deviceStatus = deviceStatus;
     pinMode(BOOT_PIN, INPUT_PULLUP);
   }
 
@@ -19,6 +20,7 @@ namespace SmartMeter {
       SerialDebug.println("No existing configuration could be loaded");
       SerialDebug.println("Booting configuration wizard ...");
       configManager.factory_default();
+      deviceStatus->config_wizard();
       
       // run config wizzard
       BootWizard bootWizard(configManager.current_config(), &SerialDebug);
@@ -49,11 +51,14 @@ namespace SmartMeter {
       delay(1000);
     }
 
+    deviceStatus->booting();
+
     SerialDebug.println("Hold the touch if you wish to boot into boot menu");
     SerialDebug.print("Booting in");
     for (int i = BOOT_MENU_TIME; i >= 0; i--) {
       SerialDebug.print(" ... " + String(i));
-      if (touchRead(BOOT_PIN) < 40) {
+      if (touchRead(BOOT_PIN) < TOUCH_SENSITIVITY) {
+        deviceStatus->boot_menu();
         SerialDebug.println("");
         show_boot_menu();
         break;
@@ -62,6 +67,7 @@ namespace SmartMeter {
     }
 
     SerialDebug.println("");
+    deviceStatus->booting();
 
     return configManager.current_config();
   }

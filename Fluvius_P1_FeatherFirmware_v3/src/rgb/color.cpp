@@ -27,9 +27,9 @@ namespace SmartMeter {
 
   Color Color::dim(int percentage) {
     return Color(
-      100*this->_red/percentage,
-      100*this->_green/percentage,
-      100*this->_blue/percentage
+      percentage*(this->_red)/100,
+      percentage*(this->_green)/100,
+      percentage*(this->_blue)/100
     );
   }
 
@@ -51,5 +51,7 @@ namespace SmartMeter {
   Color Color::WHITE() { return Color(255, 255, 255); }
   Color Color::BLACK() { return Color(0, 0, 0); }
   Color Color::ORANGE() { return Color(255, 150, 0); }
+  Color Color::YELLOW() { return Color(255, 255, 0); }
+  Color Color::PURPLE() { return Color(255, 0, 255); }
 
 };

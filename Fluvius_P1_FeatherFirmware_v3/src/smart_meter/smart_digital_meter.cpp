@@ -5,17 +5,21 @@
 
 namespace SmartMeter {
 
-  SmartDigitalMeter::SmartDigitalMeter(void)
-    : meter(REQUEST_PIN, &SerialMeter, &SerialDebug),
+  SmartDigitalMeter::SmartDigitalMeter(DeviceStatus * deviceStatus)
+    : deviceStatus(deviceStatus),
+      meter(REQUEST_PIN, deviceStatus, &SerialMeter, &SerialDebug),
       publisher(&SerialDebug) {
 
     SerialMeter.begin(METER_BAUDRATE);
-    pinMode(REQUEST_PIN, OUTPUT);
     meter.disable();
+    publisher.on_mqtt_event(std::bind(&SmartDigitalMeter::on_mqtt_event, this, std::placeholders::_1));
   }
 
   void SmartDigitalMeter::start(Configuration * config) {
     this->period = config->read_period() * 1000;
+    
+    deviceStatus->meter_starting();
+
     publisher.connect(config->mqtt_broker(), config->mqtt_port());
 
     isAcquiringData = true;
@@ -26,6 +30,7 @@ namespace SmartMeter {
 
   void SmartDigitalMeter::stop(void) {
     isAcquiringData = false;
+    publisher.disconnect();
   }
 
   void SmartDigitalMeter::process(void) {
@@ -74,6 +79,16 @@ namespace SmartMeter {
           startMillis = currentMillis;
           break;
       }
+    }
+  }
+
+  void SmartDigitalMeter::on_mqtt_event(DatagramPublisher::MqttEvent event) {
+    if (event == DatagramPublisher::MqttEvent::CONNECTED) {
+      SerialDebug.println("Detected MQTT connection.");
+      deviceStatus->mqtt_ok();
+    } else if (event == DatagramPublisher::MqttEvent::DISCONNECTED) {
+      SerialDebug.println("Lost the MQTT connection.");
+      deviceStatus->mqtt_error();
     }
   }
 

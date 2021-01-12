@@ -30,6 +30,8 @@ namespace SmartMeter {
       static Color WHITE();
       static Color BLACK();
       static Color ORANGE();
+      static Color YELLOW();
+      static Color PURPLE();
 
     private:
       void red(int value);

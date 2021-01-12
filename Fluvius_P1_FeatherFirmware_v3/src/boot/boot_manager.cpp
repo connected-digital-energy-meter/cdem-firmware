@@ -22,24 +22,21 @@ namespace SmartMeter {
       configManager.factory_default();
       deviceStatus->config_wizard();
       
-      // run config wizzard
+      // Run config wizard
       BootWizard bootWizard(configManager.current_config(), &SerialDebug);
       bool save=false;
       String input = "";
       Configuration config;
-      do{
+      do {
         config = bootWizard.RunWizard();
         SerialDebug.println(config.to_string());
         do {
-          SerialDebug.println("Are you sure you wish to save this configuration? [y/N]");
+          SerialDebug.println("\nAre you sure you wish to save this configuration? [y/N]");
           input = SerialHelper::read_line(&SerialDebug);
           input.toLowerCase();
-          SerialDebug.println("");
         } while (input != "y" && input != "n" && input != "");
 
-        if (input == "y") {
-          save=true;
-        }
+        save = (input == "y");
 
       } while(!save);
 

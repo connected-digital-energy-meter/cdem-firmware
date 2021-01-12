@@ -27,6 +27,9 @@
 
 #define LED_BRIGHTNESS 10   // Percentage
 
+// Sensitivity of Touch - Higher = more sensitive
+#define TOUCH_SENSITIVITY 30
+
 // Define a serial for debugging and for reading the meter
 #define SerialDebug Serial
 #define SerialMeter Serial1

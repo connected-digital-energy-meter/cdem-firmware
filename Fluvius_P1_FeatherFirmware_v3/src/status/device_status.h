@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../rgb/rgb_led.h"
+#include "../rgb/effects/effect.h"
 
 namespace SmartMeter {
 
@@ -15,6 +16,7 @@ namespace SmartMeter {
       void boot_menu(void);
       void config_wizard(void);
       void no_wifi_no_mqtt(void);
+      void done_booting(void);
 
     public:   // Communication
       void no_communication(void);
@@ -24,8 +26,8 @@ namespace SmartMeter {
       void mqtt_ok(void);
       void mqtt_error(void);
 
-    public:
-      void meter_awaiting(void);
+    public:   // Data
+      void meter_starting(void);
       void meter_data_ready(void);
       void meter_error(void);
 
@@ -33,14 +35,14 @@ namespace SmartMeter {
       void set_communication_led(void);
 
     private:
+      void set_duo_effect(Effects::Effect * commEffect, Effects::Effect * dataEffect);
+
+    private:
       RgbLed dataLed;
       RgbLed commLed;
 
       bool wifiOk = false;
       bool mqttOk = false;
-
-      const static unsigned int LED_BRIGHTNESS = 25;
-
   };
 
 };

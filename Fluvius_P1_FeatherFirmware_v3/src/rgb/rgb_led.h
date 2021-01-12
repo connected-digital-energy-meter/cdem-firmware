@@ -1,7 +1,7 @@
 /*
  * VIVES college Research
  *
- * Autor Ronny Mees & Nico De Witte
+ * Author Ronny Mees & Nico De Witte
  *
  * Class to controll the RGB led's on the PCB
  *
@@ -25,6 +25,10 @@ namespace SmartMeter {
     private:
       void init_channel(int pin, int channel);
       void write_color(Color color);
+
+    private:
+      void disable_red(void);
+      void enable_red(void);
 
     private:
       int _pinRed;

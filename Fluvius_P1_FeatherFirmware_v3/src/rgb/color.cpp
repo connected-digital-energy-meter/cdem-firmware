@@ -50,7 +50,7 @@ namespace SmartMeter {
   Color Color::BLUE() { return Color(0, 0, 255); }
   Color Color::WHITE() { return Color(255, 255, 255); }
   Color Color::BLACK() { return Color(0, 0, 0); }
-  Color Color::ORANGE() { return Color(255, 150, 0); }
+  Color Color::ORANGE() { return Color(255, 40, 0); }
   Color Color::YELLOW() { return Color(255, 255, 0); }
   Color Color::PURPLE() { return Color(255, 0, 255); }
 

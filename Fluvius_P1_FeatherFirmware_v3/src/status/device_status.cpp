@@ -34,8 +34,8 @@ namespace SmartMeter {
   }
 
   void DeviceStatus::config_wizard(void) {
-    static Effects::BlinkEffect commEffect(&commLed, Color::BLUE().dim(LED_BRIGHTNESS), 250);
-    static Effects::BlinkEffect dataEffect(&dataLed, Color::BLUE().dim(LED_BRIGHTNESS), 250);
+    static Effects::BlinkEffect commEffect(&commLed, Color::BLUE().dim(LED_BRIGHTNESS), 100);
+    static Effects::BlinkEffect dataEffect(&dataLed, Color::BLUE().dim(LED_BRIGHTNESS), 100);
 
     set_duo_effect(&commEffect, &dataEffect);
   }
@@ -72,7 +72,7 @@ namespace SmartMeter {
 
   void DeviceStatus::set_communication_led(void) {
     static Effects::ColorEffect allOk(&commLed, Color::GREEN().dim(LED_BRIGHTNESS));
-    static Effects::ColorEffect wifiOkNoMqtt(&commLed, Color::YELLOW().dim(LED_BRIGHTNESS));
+    static Effects::ColorEffect wifiOkNoMqtt(&commLed, Color::PURPLE().dim(LED_BRIGHTNESS));
     static Effects::BlinkEffect noWifi(&commLed, Color::RED().dim(LED_BRIGHTNESS), 250);
 
     if (mqttOk && wifiOk) EffectsManager::set_effect("comm", &allOk);
@@ -81,7 +81,7 @@ namespace SmartMeter {
   }
 
   void DeviceStatus::meter_starting(void) {
-    static Effects::ColorEffect starting(&dataLed, Color::YELLOW().dim(LED_BRIGHTNESS));
+    static Effects::ColorEffect starting(&dataLed, Color::PURPLE().dim(LED_BRIGHTNESS));
 
     EffectsManager::set_effect("data", &starting);
   }

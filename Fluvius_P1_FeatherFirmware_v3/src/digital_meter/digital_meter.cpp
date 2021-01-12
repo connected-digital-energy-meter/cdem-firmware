@@ -1,18 +1,18 @@
 #include "digital_meter.h"
 #include "crc_checker.h"
-#include "../rgb/rgb_led.h"
 
 namespace SmartMeter {
 
   #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
   #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
 
-  DigitalMeter::DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial) {
+  DigitalMeter::DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial, HardwareSerial * debugSerial) {\
+    this->deviceStatus = deviceStatus;
     this->requestPin = requestPin;
     this->serial = serial;
     this->debugSerial = debugSerial;
     pinMode(requestPin, OUTPUT);
-    // dataLed.clear();
+    deviceStatus->meter_awaiting();
   }
 
   void DigitalMeter::enable(void) {
@@ -29,7 +29,7 @@ namespace SmartMeter {
 
   void DigitalMeter::timeout(void) {
     digitalWrite(requestPin, LOW);
-    // dataLed.color(ErrorMeterColor);
+    deviceStatus->meter_error();
     SerialDebug.println("Communication with the smartmeter timed out!");        
   }
 
@@ -60,7 +60,7 @@ namespace SmartMeter {
           DebugLn("Checking datagram CRC");
           if (CrcChecker::check_crc(buffer, readPointer)) {
             DebugLn("Datagram is valid");
-            // dataLed.color(ReadyMeterColor);
+            deviceStatus->meter_data_ready();
             return true;
           } else {
             DebugLn("Datagram is invalid - CRC Check Failed");

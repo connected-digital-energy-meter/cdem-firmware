@@ -4,13 +4,14 @@
 #include "../digital_meter/digital_meter.h"
 #include "../mqtt/datagram_publisher.h"
 #include "../config/configuration.h"
+#include "../status/device_status.h"
 
 namespace SmartMeter {
 
   class SmartDigitalMeter {
 
     public:
-      SmartDigitalMeter(void);
+      SmartDigitalMeter(DeviceStatus * deviceStatus);
 
     public:
       void start(Configuration * config);
@@ -38,13 +39,15 @@ namespace SmartMeter {
       bool isAcquiringData = false;
 
       // Set for periodic measurement
-      long period = 10000L;      // TODO - Make config option
+      long period = 10000L;
       unsigned long startMillis;            
       unsigned long currentMillis;
       unsigned long timeout;
 
       // Declare State and set state to IDLE
       State currentState = State::IDLE;
+
+      DeviceStatus * deviceStatus;
   };
 
 };

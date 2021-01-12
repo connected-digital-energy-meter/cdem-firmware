@@ -10,15 +10,14 @@
 
 #include <Arduino.h>
 #include "../../hardware.h"
-#include "../rgb/rgb_led.h"
-
+#include "../status/device_status.h"
 
 namespace SmartMeter {
 
   class DigitalMeter {
 
     public:
-      DigitalMeter(int requestPin, HardwareSerial * serial, HardwareSerial * debugSerial=nullptr);
+      DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial, HardwareSerial * debugSerial=nullptr);
 
     public:
       void enable(void);
@@ -41,6 +40,8 @@ namespace SmartMeter {
 
       unsigned int readPointer = 0;
       bool startDetected = false;
+
+      DeviceStatus * deviceStatus;
   };
 
 };

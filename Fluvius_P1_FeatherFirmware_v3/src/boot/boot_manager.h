@@ -2,6 +2,7 @@
 
 #include "../config/config_manager.h"
 #include "../config/configuration.h"
+#include "../status/device_status.h"
 
 // BootManager takes care of the whole boot process
 // and delivers a valid usable configuration to the
@@ -12,7 +13,7 @@ namespace SmartMeter {
   class BootManager {
 
     public:
-      BootManager(void);
+      BootManager(DeviceStatus * deviceStatus);
 
     public:
       Configuration boot(void);
@@ -23,6 +24,7 @@ namespace SmartMeter {
 
     private:
       ConfigManager configManager;
+      DeviceStatus * deviceStatus;
 
     private:
       const int BOOT_MENU_TIME = 10;  // Seconds

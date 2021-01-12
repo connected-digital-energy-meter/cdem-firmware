@@ -17,7 +17,7 @@ namespace SmartMeter {
 
       + 2;  // For length at beginning
 
-    if (neededSpace > size) return -1;
+    if (neededSpace > size) return 0;
 
     char * pBuffer = buffer;
     *pBuffer++ = (char)((neededSpace >> 8) & 0xFF);

@@ -40,7 +40,7 @@ namespace SmartMeter {
     char buffer[SIZE];
     size_t length = ConfigSerializer::serialize(buffer, SIZE, &_currentConfig);
 
-    if (length < 0) return false;
+    if (!length) return false;
 
     int offset = sizeof(IDENTIFIER);
     for (int i = 0; i < length; i++) {

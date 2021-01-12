@@ -2,110 +2,90 @@
 
 namespace SmartMeter {
 
-  // TODO - There is a bug here ! Length of buffer is not taken into account
-  // and buffer is not null-terminated. See issue #24
-  double Decoder::parse_data_value(char * _buffer, char * key, int datablock) {
-    // look for the OBIS reference
-    char* position = strstr(_buffer, key);
+  String Decoder::find_data_string(char * buffer, const char * key, bool hasUnit, unsigned int datablockNumber) {
+    // Look for the OBIS reference
+    char* position = strstr(buffer, key);
 
-    // if OBIS reference found
-    if (position) {
-      // look for the start position of the value for this OBIS reference
-      char* start = position + strlen(key) + 1;
+    if (!position) return "";
 
-      // if there are two value blocks then look for the start of the second one
-      if (datablock == 2) {
-        char* start = strchr(start, '(') + 1;  
-      }
+    // Start position of value blocks in form of (...)(....)(....)
+    char* start = position + strlen(key);
 
-      // look for the end position of the value for this OBIS reference
-      char* end = strchr(start, '*') - 1;
+    unsigned int datablockCount = 0;
+    do {
+      start = strchr(start, '(') + 1;
+      datablockCount++;
 
-      // get the value of the OBIS reference
-      char tempbuffer[64] = {0};
-      strncpy(tempbuffer, start, end-start+1);
+      if (!start) return "";
 
-      // return the value
-      return atof(tempbuffer);
-    } else {
-      // return invalid if OBIS reference not found
-      return -1;
+    } while (datablockCount < datablockNumber);
+
+    if (*start == ')') return "";   // Empty data block
+
+    // Look for the end position of the value for this OBIS reference
+    char * end = NULL;
+    if (hasUnit) {
+      end = strchr(start, '*') - 1;
+    } else { 
+      end = strchr(start, ')') - 1;
     }
+    if (!end) return "";
+
+    char tempbuffer[64] = {0};
+    strncpy(tempbuffer, start, end-start+1);
+
+    return String(tempbuffer);
   }
 
+  bool Decoder::parse_data_value(char * _buffer, const char * key, double * value, bool hasUnit, unsigned int datablockNumber) {
+    String text = find_data_string(_buffer, key, hasUnit, datablockNumber);
 
+    if (text == "") return false;
+    
+    *value = text.toDouble();
+    return true;
+  }
 
-
-
-
-
-
-
-  Datagram Decoder::decode(char* buffer, size_t bufferlength) {
+  Datagram Decoder::decode(char * buffer, size_t bufferlength) {
     Datagram output;
 
-    // 1-0:1.8.2 = OBIS reference for electricity delivered to client in low tariff
-    output.set(String("consumption_low_tarif"), parse_data_value(buffer, "1-0:1.8.2", 1));
+    struct UtilityKeyValue {
+      const char * key;
+      const char * id;
+      double value;
+      bool unitted;
+      unsigned int datablockNumber;
+    };
 
-    // 1-0:1.8.1 = OBIS reference for electricity delivered to client in high tariff
-    output.set(String("consumption_high_tarif"), parse_data_value(buffer, "1-0:1.8.1", 1));
+    UtilityKeyValue listing[] = {
+      { "1-0:1.8.1", "consumption_high_tarif", 0.0, true, 1 },
+      { "1-0:1.8.2", "consumption_low_tarif", 0.0, true, 1 },
+      { "1-0:2.8.1", "production_high_tarif", 0.0, true, 1 },
+      { "1-0:2.8.2", "production_low_tarif", 0.0, true, 1 },
+      { "1-0:1.7.0", "total_power_consumption", 0.0, true, 1 },
+      { "1-0:2.7.0", "total_power_production", 0.0, true, 1 },
+      { "1-0:32.7.0", "actual_voltage_l1", 0.0, true, 1 },
+      { "1-0:52.7.0", "actual_voltage_l2", 0.0, true, 1 },
+      { "1-0:72.7.0", "actual_voltage_l3", 0.0, true, 1 },
+      { "1-0:31.7.0", "actual_current_l1", 0.0, true, 1 },
+      { "1-0:51.7.0", "actual_current_l2", 0.0, true, 1 },
+      { "1-0:71.7.0", "actual_current_l3", 0.0, true, 1 },
+      { "1-0:22.7.0", "l1_power_consumption", 0.0, true, 1 },
+      { "1-0:42.7.0", "l2_power_consumption", 0.0, true, 1 },
+      { "1-0:62.7.0", "l3_power_consumption", 0.0, true, 1 },
+      { "1-0:21.7.0", "l1_power_production", 0.0, true, 1 },
+      { "1-0:41.7.0", "l2_power_production", 0.0, true, 1 },
+      { "1-0:61.7.0", "l3_power_production", 0.0, true, 1 },
+      { "0-0:96.14.0", "actual_tarif", 0.0, false, 1 },
+      { "0-1:24.2.3", "gas_meter_m3", true, 2 },
+      { "0-2:24.2.1", "water_meter_m3", true, 2 }
+    };
 
-    // 1-0:2.8.2 = OBIS reference for electricity delivered by client in low tariff
-    output.set(String("production_low_tarif"), parse_data_value(buffer, "1-0:2.8.2", 1));
-
-    // 1-0:2.8.1 = OBIS reference for electricity delivered by client in high tariff
-    output.set(String("production_high_tarif"), parse_data_value(buffer, "1-0:2.8.1", 1));
-
-    // 1-0:1.7.0 = OBIS reference actual total power delivered to client
-    output.set(String("total_power_consumption"), parse_data_value(buffer, "1-0:1.7.0", 1));
-
-    // 1-0:2.7.0 = OBIS reference actual total power delivered by client
-    output.set(String("total_power_production"), parse_data_value(buffer, "1-0:2.7.0", 1));
-
-    // 0-0:96.14.0 = OBIS reference actual tariff
-    output.set(String("actual_tarif"), parse_data_value(buffer, "0-0:96.14.0", 1));
-
-    // 1-0:32.7.0 = OBIS reference actual voltage L1
-    output.set(String("actual_voltage_l1"), parse_data_value(buffer, "1-0:32.7.0", 1));
-
-    // 1-0:52.7.0 = OBIS reference actual voltage L2
-    output.set(String("actual_voltage_l2"), parse_data_value(buffer, "1-0:52.7.0", 1));
-
-    // 1-0:72.7.0 = OBIS reference actual voltage L3
-    output.set(String("actual_voltage_l3"), parse_data_value(buffer, "1-0:72.7.0", 1));
-
-    // 1-0:31.7.0 = OBIS reference actual current L1
-    output.set(String("actual_current_l1"), parse_data_value(buffer, "1-0:31.7.0", 1));
-
-    // 1-0:51.7.0 = OBIS reference actual current L2
-    output.set(String("actual_current_l2"), parse_data_value(buffer, "1-0:51.7.0", 1));
-
-    // 1-0:71.7.0 = OBIS reference actual current L3
-    output.set(String("actual_current_l3"), parse_data_value(buffer, "1-0:71.7.0", 1));
-
-    // 1-0:22.7.0 = OBIS reference actual power comsumption L1
-    output.set(String("l1_power_consumption"), parse_data_value(buffer, "1-0:22.7.0", 1));
-
-    // 1-0:42.7.0 = OBIS reference actual power comsumption L2
-    output.set(String("l2_power_consumption"), parse_data_value(buffer, "1-0:42.7.0", 1));
-
-    // 1-0:62.7.0 = OBIS reference actual power comsumption L3
-    output.set(String("l3_power_consumption"), parse_data_value(buffer, "1-0:62.7.0", 1));
-
-    // 1-0:21.7.0 = OBIS reference actual power production L1
-    output.set(String("l1_power_production"), parse_data_value(buffer, "1-0:21.7.0", 1));
-
-    // 1-0:41.7.0 = OBIS reference actual power production L2
-    output.set(String("l2_power_production"), parse_data_value(buffer, "1-0:41.7.0", 1));
-
-    // 1-0:61.7.0 = OBIS reference actual power production L3
-    output.set(String("l3_power_production"), parse_data_value(buffer, "1-0:61.7.0", 1));
-    
-    // 0-1:24.2.3 = OBIS reference gas delivered to client with temperature correction , 0-n where the n is the device number, possibly you need to change this number for your configuration
-    output.set(String("gas_meter_m3"), parse_data_value(buffer, "0-1:24.2.3",2));
-
-    // 0-2:24.2.1 = OBIS reference water delivered to client, 0-n where the n is the device number, possibly you need to change this number for your configuration
-    output.set(String("water_meter_m3"), parse_data_value(buffer, "0-2:24.2.1",2));
+    for (size_t i = 0; i < sizeof(listing)/sizeof(UtilityKeyValue); i++) {
+      if (parse_data_value(buffer, listing[i].key, &(listing[i].value))) {
+        output.set(String(listing[i].id), listing[i].value);
+      }
+    }
 
     return output;
   }

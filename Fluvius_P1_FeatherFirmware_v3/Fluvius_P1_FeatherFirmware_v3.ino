@@ -90,7 +90,7 @@ void setup() {
   // Setup timers for WiFi and MQTT
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
-  deviceStatus.clear();
+  deviceStatus.done_booting();
 
   // Setup eventhandler WiFi
   WiFi.onEvent(WiFiEvent);

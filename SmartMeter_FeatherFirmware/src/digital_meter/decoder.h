@@ -18,7 +18,7 @@ namespace SmartMeter {
       static Datagram decode(char* buffer, size_t bufferlength);
 
     private:
-      static double parse_data_value(char* _buffer, char* key, int datablock);
+      static double parse_data_value(char* _buffer, const char* key, int datablock);
 
   };
 

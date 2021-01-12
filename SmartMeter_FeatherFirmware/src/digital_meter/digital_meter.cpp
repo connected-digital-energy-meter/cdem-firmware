@@ -44,6 +44,7 @@ namespace SmartMeter {
         readPointer = 0;
         startDetected = true;
         DebugLn("Detected start of a datagram");
+        clear_buffer();
       }
 
       // Ignore all data on serial port if start was not detected
@@ -55,6 +56,7 @@ namespace SmartMeter {
         if (incomingByte == '\n' && buffer[readPointer-7] == '!') {
           DebugLn("Read in full datagram");
           startDetected = false;
+          buffer[readPointer] = '\0';   // Null-terminate buffer
 
           DebugLn("Checking datagram CRC");
           if (CrcChecker::check_crc(buffer, readPointer)) {

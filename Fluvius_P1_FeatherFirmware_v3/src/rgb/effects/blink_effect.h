@@ -9,10 +9,11 @@ namespace SmartMeter {
     class BlinkEffect : public Effect {
 
       public:
-        BlinkEffect(RgbLed * led, Color color, unsigned int delayMs);
+        BlinkEffect(RgbLed * led, Color color, unsigned int delayMs, unsigned int startDelay=0);
 
       public:
         virtual void start(void) override;
+        virtual void stop(void) override;
         virtual void output(unsigned int deltaMilliseconds) override;
 
       private:
@@ -20,6 +21,8 @@ namespace SmartMeter {
         bool isOn = false;
         unsigned int delayMs;
         unsigned int currentDelay = 0;
+        unsigned int startDelay = 0;
+        bool started = false;
     };
 
   };

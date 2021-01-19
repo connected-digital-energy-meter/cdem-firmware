@@ -101,6 +101,8 @@ void setup() {
   SerialDebug.println("Starting meter ... ");
   smartMeter.start(&configuration);
   SerialDebug.println("Boot finished");
+
+  delay(10000);   // Wait for MQTT - This is a band aid for MQTT connection problem - Not solution - See issue #29
 }
 
 void loop() {

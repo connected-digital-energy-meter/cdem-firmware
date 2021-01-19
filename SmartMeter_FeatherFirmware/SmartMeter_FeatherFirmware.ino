@@ -57,13 +57,13 @@ void WiFiEvent(WiFiEvent_t event) {
       SerialDebug.print("WiFi connected with IP Address: ");
       SerialDebug.println(WiFi.localIP());
       deviceStatus.wifi_ok();
-      // smartMeter.start(&configuration);
+      smartMeter.start(&configuration);
       break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
       SerialDebug.println("WiFi lost connection");
       xTimerStart(wifiReconnectTimer, 0);
       deviceStatus.no_communication();
-      // smartMeter.stop();
+      smartMeter.stop();
       break;
     default: break;
   }
@@ -99,8 +99,10 @@ void setup() {
   connectToWifi();
 
   SerialDebug.println("Starting meter ... ");
-  smartMeter.start(&configuration);
+  //smartMeter.start(&configuration);
   SerialDebug.println("Boot finished");
+
+  //delay(10000);   // Wait for MQTT - This is a band aid for MQTT connection problem - Not solution - See issue #29
 }
 
 void loop() {

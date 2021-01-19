@@ -54,7 +54,7 @@ namespace SmartMeter {
     private:
       HardwareSerial * debugSerial;
       AsyncMqttClient mqttClient;
-      bool _connected = false;
+      // bool _connected = false;
       bool _shouldBeConnected = false;
       TimerHandle_t reconnectTimer;
       static const unsigned int RECONNECT_TIME_MS = 10000;

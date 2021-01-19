@@ -29,7 +29,7 @@ namespace SmartMeter {
   void DigitalMeter::timeout(void) {
     digitalWrite(requestPin, LOW);
     deviceStatus->meter_error();
-    SerialDebug.println("Communication with the smartmeter timed out!");        
+    DebugLn("Communication with the smartmeter timed out!");        
   }
 
   // Read a new datagram from the P1 port

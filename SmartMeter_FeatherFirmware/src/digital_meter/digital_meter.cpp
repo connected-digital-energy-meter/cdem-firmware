@@ -40,7 +40,7 @@ namespace SmartMeter {
       char incomingByte = serial->read();
             
       // Look for the start of the datagram
-      if (!startDetected && incomingByte == '/') {
+      if (incomingByte == '/') {
         readPointer = 0;
         startDetected = true;
         DebugLn("Detected start of a datagram");

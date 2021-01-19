@@ -72,7 +72,6 @@ namespace SmartMeter {
         // Publish data to MQTT  
         case State::DATAGRAM_DECODED:
           publisher.publish(&datagram);
-          SerialDebug.println("Datagram published");
           // Ready for next request    
           currentState = State::IDLE;
           // reset timer

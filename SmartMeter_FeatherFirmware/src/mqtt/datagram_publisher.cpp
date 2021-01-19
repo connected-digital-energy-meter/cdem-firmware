@@ -104,6 +104,7 @@ namespace SmartMeter {
       String data = String(datagram->get(key));
       mqttClient.publish(topic.c_str(), 1, true, data.c_str());
     }
+    DebugLn("DGP - Datagram published");
   }
 
 };

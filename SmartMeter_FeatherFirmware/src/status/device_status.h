@@ -20,11 +20,8 @@ namespace SmartMeter {
 
     public:   // Communication
       void no_communication(void);
-      void wifi_ok(void);
-      void wifi_error(void);
-
-      void mqtt_ok(void);
-      void mqtt_error(void);
+      void wifi_no_mqtt(void);
+      void wifi_and_mqtt_ok(void);
 
     public:   // Data
       void meter_starting(void);
@@ -40,9 +37,6 @@ namespace SmartMeter {
     private:
       RgbLed dataLed;
       RgbLed commLed;
-
-      bool wifiOk = false;
-      bool mqttOk = false;
   };
 
 };

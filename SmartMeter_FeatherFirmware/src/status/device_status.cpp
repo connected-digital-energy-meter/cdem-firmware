@@ -45,39 +45,21 @@ namespace SmartMeter {
   }
 
   void DeviceStatus::no_communication(void) {
-    wifiOk = false;
-    mqttOk = false;
-    set_communication_led();
-  }
-
-  void DeviceStatus::wifi_ok(void) {
-    wifiOk = true;
-    set_communication_led();
-  }
-
-  void DeviceStatus::wifi_error(void) {
-    wifiOk = false;
-    set_communication_led();
-  }
-
-  void DeviceStatus::mqtt_ok(void) {
-    mqttOk = true;
-    set_communication_led();
-  }
-
-  void DeviceStatus::mqtt_error(void) {
-    mqttOk = false;
-    set_communication_led();
-  }
-
-  void DeviceStatus::set_communication_led(void) {
-    static Effects::ColorEffect allOk(&commLed, Color::GREEN().dim(LED_BRIGHTNESS));
-    static Effects::ColorEffect wifiOkNoMqtt(&commLed, Color::PURPLE().dim(LED_BRIGHTNESS));
     static Effects::BlinkEffect noWifi(&commLed, Color::RED().dim(LED_BRIGHTNESS), 250);
 
-    if (mqttOk && wifiOk) EffectsManager::set_effect("comm", &allOk);
-    else if (!mqttOk && wifiOk) EffectsManager::set_effect("comm", &wifiOkNoMqtt);
-    else EffectsManager::set_effect("comm", &noWifi);
+    EffectsManager::set_effect("comm", &noWifi);
+  }
+
+  void DeviceStatus::wifi_no_mqtt(void) {
+    static Effects::ColorEffect wifiOkNoMqtt(&commLed, Color::PURPLE().dim(LED_BRIGHTNESS));
+
+    EffectsManager::set_effect("comm", &wifiOkNoMqtt);
+  }
+
+  void DeviceStatus::wifi_and_mqtt_ok(void) {
+    static Effects::ColorEffect allOk(&commLed, Color::GREEN().dim(LED_BRIGHTNESS));
+
+    EffectsManager::set_effect("comm", &allOk);
   }
 
   void DeviceStatus::meter_starting(void) {

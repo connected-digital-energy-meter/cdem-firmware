@@ -23,42 +23,29 @@ namespace SmartMeter {
 
     public:
       DatagramPublisher(HardwareSerial * debugSerial=nullptr);
-
-    public:
-      void on_mqtt_event(std::function<void(MqttEvent)> mqttEventCallback);
+      ~DatagramPublisher(void);
 
     public:
       void connect(String host, uint16_t port);
       void disconnect(void);
+      bool publish(Datagram * _datagram, String baseTopic);
+      bool connected(void);
 
     public:
-      void publish(Datagram * _datagram);
+      void on_mqtt_event(std::function<void(MqttEvent)> mqttEventCallback);
 
     private:
       void setup_callbacks(void);
-
-    private:
-      void connect(void);
+      void _connect(void);
 
     private:
       void on_connected(bool sessionPresent);
       void on_disconnected(AsyncMqttClientDisconnectReason reason);
-
-    private:
-      void start_reconnect_timer(void);
-      void stop_reconnect_timer(void);
-
-    private:
-      static void reconnect_timer_callback(TimerHandle_t timer);
+      void on_published(uint16_t packetId);
 
     private:
       HardwareSerial * debugSerial;
       AsyncMqttClient mqttClient;
-      // bool _connected = false;
-      bool _shouldBeConnected = false;
-      TimerHandle_t reconnectTimer;
-      static const unsigned int RECONNECT_TIME_MS = 10000;
-
       std::function<void(MqttEvent)> mqttEventCallback = nullptr;
   };
 

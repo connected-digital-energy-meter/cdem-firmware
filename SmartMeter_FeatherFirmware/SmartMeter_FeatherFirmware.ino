@@ -26,14 +26,13 @@ DeviceStatus deviceStatus;
 // Initiate variable of Digitalmeter and configurationmanager.
 Configuration configuration;
 SmartDigitalMeter smartMeter(&deviceStatus);
-TimerHandle_t wifiReconnectTimer;
 
-// Connect to WiFi
-void connectToWifi() {
+void connect_to_wifi() {
   deviceStatus.no_communication();
 
   SerialDebug.println("Connecting to WiFi ...");
   if (!configuration.use_dhcp()) {
+    SerialDebug.println("Using static IP ...");
     if (!WiFi.config(
       IPParser::parse_ipv4(configuration.static_ip()),
       IPParser::parse_ipv4(configuration.default_gateway()),
@@ -41,6 +40,8 @@ void connectToWifi() {
       // IPParser::parse_ipv4("8.8.8.8"),  // Google DNS
     )) {
       SerialDebug.println("Failed to configure WiFi. Please check your configuration.");
+    } else {
+      SerialDebug.println("Using DHCP ...");
     }
   }
 
@@ -50,29 +51,9 @@ void connectToWifi() {
   );
 }
 
-// Handle WiFi events
-void WiFiEvent(WiFiEvent_t event) {
-  switch(event) {
-    case SYSTEM_EVENT_STA_GOT_IP:
-      SerialDebug.print("WiFi connected with IP Address: ");
-      SerialDebug.println(WiFi.localIP());
-      deviceStatus.wifi_ok();
-      smartMeter.start(&configuration);
-      break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-      SerialDebug.println("WiFi lost connection");
-      xTimerStart(wifiReconnectTimer, 0);
-      deviceStatus.no_communication();
-      smartMeter.stop();
-      break;
-    default: break;
-  }
-}
-
 void setup() {
-  // Set the baudrate for both serial connections
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
-  SerialDebug.println("Starting Feather Fluvius Meter Reader firmware ...");
+  SerialDebug.println("Starting Connected Digital Energy Meter firmware ...");
   deviceStatus.booting();
   delay(5000);    // Give some time to open serial terminal
 
@@ -85,24 +66,16 @@ void setup() {
   SerialDebug.println(configuration.to_string());
 
   delay(5000);
-  SerialDebug.println("Continuing boot procedure ...");
-
-  // Setup timers for WiFi and MQTT
-  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
-
+  SerialDebug.println("Boot procedure finished");
   deviceStatus.done_booting();
 
-  // Setup eventhandler WiFi
-  WiFi.onEvent(WiFiEvent);
+  // Setup WiFi (no need for reconnect Timer. WiFi lib has internal reconnect mechanism)
+  // The rest is handled by the smart meter
+  connect_to_wifi();
 
-  // Make Wifi Connection
-  connectToWifi();
-
-  SerialDebug.println("Starting meter ... ");
-  //smartMeter.start(&configuration);
-  SerialDebug.println("Boot finished");
-
-  //delay(10000);   // Wait for MQTT - This is a band aid for MQTT connection problem - Not solution - See issue #29
+  // Start Smart Meter
+  SerialDebug.println("Starting smart meter ... ");
+  smartMeter.start(&configuration);
 }
 
 void loop() {

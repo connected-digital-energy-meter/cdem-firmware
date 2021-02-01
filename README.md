@@ -39,3 +39,9 @@ This library has the following dependency: [https://github.com/me-no-dev/AsyncTC
 ```bash
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
 ```
+
+## Development
+
+### Backtrace decoding
+
+[https://github.com/me-no-dev/EspExceptionDecoder](https://github.com/me-no-dev/EspExceptionDecoder)

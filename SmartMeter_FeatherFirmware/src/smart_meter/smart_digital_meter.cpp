@@ -11,7 +11,7 @@ namespace SmartMeter {
 
     SerialMeter.begin(METER_BAUDRATE);
     meter.disable();
-    WiFi.onEvent(std::bind(&SmartDigitalMeter::wifi_event, this, std::placeholders::_1 ));
+    // WiFi.onEvent(std::bind(&SmartDigitalMeter::wifi_event, this, std::placeholders::_1 ));
   }
 
   void SmartDigitalMeter::start(Configuration * config) {
@@ -88,27 +88,29 @@ namespace SmartMeter {
   }
 
   // Let's just use this one for logging
-  void SmartDigitalMeter::wifi_event(WiFiEvent_t event) {
-    switch(event) {
-      case SYSTEM_EVENT_STA_GOT_IP:
-        SerialDebug.print("SMART - WiFi connected with IP Address: ");
-        SerialDebug.println(WiFi.localIP());
-        break;
-      case SYSTEM_EVENT_STA_DISCONNECTED:
-        SerialDebug.println("SMART - WiFi lost connection");
-        break;
-      default: break;
-    }
-  }
+  // WARNING - Serial is probable thread-safe.
+  // void SmartDigitalMeter::wifi_event(WiFiEvent_t event) {
+  //   switch(event) {
+  //     case SYSTEM_EVENT_STA_GOT_IP:
+  //       SerialDebug.print("SMART - WiFi connected with IP Address: ");
+  //       SerialDebug.println(WiFi.localIP());
+  //       break;
+  //     case SYSTEM_EVENT_STA_DISCONNECTED:
+  //       SerialDebug.println("SMART - WiFi lost connection");
+  //       break;
+  //     default: break;
+  //   }
+  // }
 
   // Let's just use this one for logging
-  void SmartDigitalMeter::on_mqtt_event(DatagramPublisher::MqttEvent event) {
-    if (event == DatagramPublisher::MqttEvent::CONNECTED) {
-      SerialDebug.println("SMART - Detected MQTT connection.");
-    } else if (event == DatagramPublisher::MqttEvent::DISCONNECTED) {
-      SerialDebug.println("SMART - Lost the MQTT connection.");
-    }
-  }
+  // WARNING - Serial is probable thread-safe.
+  // void SmartDigitalMeter::on_mqtt_event(DatagramPublisher::MqttEvent event) {
+  //   if (event == DatagramPublisher::MqttEvent::CONNECTED) {
+  //     SerialDebug.println("SMART - Detected MQTT connection.");
+  //   } else if (event == DatagramPublisher::MqttEvent::DISCONNECTED) {
+  //     SerialDebug.println("SMART - Lost the MQTT connection.");
+  //   }
+  // }
 
   // Async MQTT Client has some problems when WiFi connection is not operational
   // yet or disconnects. To solve most problems we create and destroy the publisher
@@ -181,14 +183,14 @@ namespace SmartMeter {
       // Panic here ?
       return;
     }
-    publisher->on_mqtt_event(std::bind(&SmartDigitalMeter::on_mqtt_event, this, std::placeholders::_1));
+    // publisher->on_mqtt_event(std::bind(&SmartDigitalMeter::on_mqtt_event, this, std::placeholders::_1));
     publisher->connect(deviceConfig->mqtt_broker(), deviceConfig->mqtt_port());
   }
 
   void SmartDigitalMeter::destroy_publisher(void) {
     if (publisher) {
       SerialDebug.println("SMART - Destroying MQTT publisher");
-      publisher->on_mqtt_event(nullptr);      // Don't want the events anymore
+      // publisher->on_mqtt_event(nullptr);      // Don't want the events anymore
       publisher->disconnect();
       delete publisher;
       publisher = nullptr;

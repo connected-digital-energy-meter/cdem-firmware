@@ -70,6 +70,7 @@ namespace SmartMeter {
         // Decode data  
         case State::PROCESSING_DATAGRAM:
           datagram = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
+          DoLog.info("Successfully decoded datagram ready for publish", "smart");
           DoLog.verbose(datagram.to_string(), "smart");
           currentState = State::DATAGRAM_DECODED;
           break;

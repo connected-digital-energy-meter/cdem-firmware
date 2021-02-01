@@ -71,7 +71,7 @@ void setup() {
 
   // Once booted we should only use DoLog anymore!
   DoLog.set_destination(&SerialDebug);
-  DoLog.set_level(Logger::LogLevel::WARNING);
+  // DoLog.set_level(Logger::LogLevel::WARNING);
 
   // Setup WiFi (no need for reconnect Timer. WiFi lib has internal reconnect mechanism)
   // The rest is handled by the smart meter

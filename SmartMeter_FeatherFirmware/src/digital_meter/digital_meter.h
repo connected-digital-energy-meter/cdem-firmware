@@ -17,7 +17,7 @@ namespace SmartMeter {
   class DigitalMeter {
 
     public:
-      DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial, HardwareSerial * debugSerial=nullptr);
+      DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial);
 
     public:
       void enable(void);
@@ -35,7 +35,6 @@ namespace SmartMeter {
 
     private:
       HardwareSerial * serial;
-      HardwareSerial * debugSerial = nullptr;
       int requestPin;
 
       unsigned int readPointer = 0;

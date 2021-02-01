@@ -22,7 +22,7 @@ namespace SmartMeter {
       };
 
     public:
-      DatagramPublisher(HardwareSerial * debugSerial=nullptr);
+      DatagramPublisher(void);
       ~DatagramPublisher(void);
 
     public:
@@ -44,7 +44,6 @@ namespace SmartMeter {
       void on_published(uint16_t packetId);
 
     private:
-      HardwareSerial * debugSerial;
       AsyncMqttClient mqttClient;
       std::function<void(MqttEvent)> mqttEventCallback = nullptr;
   };

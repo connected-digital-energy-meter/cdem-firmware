@@ -2,12 +2,13 @@
 
 #include "../digital_meter/decoder.h"
 #include "../../hardware.h"
+#include "../logging/logger.h"
 
 namespace SmartMeter {
 
   SmartDigitalMeter::SmartDigitalMeter(DeviceStatus * deviceStatus)
     : deviceStatus(deviceStatus),
-      meter(REQUEST_PIN, deviceStatus, &SerialMeter, &SerialDebug) {
+      meter(REQUEST_PIN, deviceStatus, &SerialMeter) {
 
     SerialMeter.begin(METER_BAUDRATE);
     meter.disable();
@@ -69,8 +70,7 @@ namespace SmartMeter {
         // Decode data  
         case State::PROCESSING_DATAGRAM:
           datagram = SmartMeter::Decoder::decode(datagramBuffer, sizeof(datagramBuffer));
-          SerialDebug.println("Decoded datagram:");
-          SerialDebug.println(datagram.to_string());
+          DoLog.verbose(datagram.to_string(), "smart");
           currentState = State::DATAGRAM_DECODED;
           break;
         // Publish data to MQTT  
@@ -92,11 +92,11 @@ namespace SmartMeter {
   // void SmartDigitalMeter::wifi_event(WiFiEvent_t event) {
   //   switch(event) {
   //     case SYSTEM_EVENT_STA_GOT_IP:
-  //       SerialDebug.print("SMART - WiFi connected with IP Address: ");
-  //       SerialDebug.println(WiFi.localIP());
+  //       DoLog.info("SMART - WiFi connected with IP Address: ");
+  //       DoLog.info(WiFi.localIP());
   //       break;
   //     case SYSTEM_EVENT_STA_DISCONNECTED:
-  //       SerialDebug.println("SMART - WiFi lost connection");
+  //       DoLog.info("SMART - WiFi lost connection");
   //       break;
   //     default: break;
   //   }
@@ -106,9 +106,9 @@ namespace SmartMeter {
   // WARNING - Serial is probable thread-safe.
   // void SmartDigitalMeter::on_mqtt_event(DatagramPublisher::MqttEvent event) {
   //   if (event == DatagramPublisher::MqttEvent::CONNECTED) {
-  //     SerialDebug.println("SMART - Detected MQTT connection.");
+  //     DoLog.info("SMART - Detected MQTT connection.");
   //   } else if (event == DatagramPublisher::MqttEvent::DISCONNECTED) {
-  //     SerialDebug.println("SMART - Lost the MQTT connection.");
+  //     DoLog.warning("SMART - Lost the MQTT connection.");
   //   }
   // }
 
@@ -119,22 +119,28 @@ namespace SmartMeter {
     if (WiFi.status() != WL_CONNECTED) {
       if (commState != CommState::AWAITING_WIFI) {
         commState = CommState::WIFI_LOST;
+        wifiTimeoutCounter = 0;
       }
     }
 
     switch(commState) {
       case CommState::AWAITING_WIFI:
-        SerialDebug.println("COMMSTATE - Awaiting WiFi");
+        DoLog.verbose("Awaiting WiFi", "comm-state");
         deviceStatus->no_communication();
         if (WiFi.status() == WL_CONNECTED) {
           commState = CommState::SETUP_MQTT;
           return;
         }
+        wifiTimeoutCounter++;
+        if (wifiTimeoutCounter >= 10) {
+          DoLog.warning("Can not connect to WiFi.", "comm-state");
+          wifiTimeoutCounter = 0;
+        }
         break;
 
       case CommState::SETUP_MQTT:
         deviceStatus->wifi_no_mqtt();
-        SerialDebug.println("COMMSTATE - Awaiting MQTT");
+        DoLog.verbose("Awaiting MQTT", "comm-state");
         commState = CommState::AWAITING_MQTT;
         mqttTimeoutCounter = 0;
         setup_publisher();
@@ -144,10 +150,12 @@ namespace SmartMeter {
         if (publisher) {
           if (publisher->connected()) {
             commState = CommState::ALL_OPERATIONAL;
+            DoLog.info("All operational", "comm-state");
           } else {
-            SerialDebug.println("COMMSTATE - Publisher created but not connected");
+            DoLog.verbose("Publisher created but not connected", "comm-state");
             mqttTimeoutCounter++;
             if (mqttTimeoutCounter >= 6) {
+              DoLog.warning("Could not connect publisher to mqtt broker", "comm-state");
               commState = CommState::SETUP_MQTT;
             }
           }
@@ -157,16 +165,17 @@ namespace SmartMeter {
         break;
 
       case CommState::ALL_OPERATIONAL:
-        SerialDebug.println("COMMSTATE - All operational");
+        DoLog.verbose("All operational", "comm-state");
         deviceStatus->wifi_and_mqtt_ok();
 
         if (!publisher || !publisher->connected()) {
+          DoLog.warning("Lost connection to MQTT broker", "comm-state");
           commState = CommState::SETUP_MQTT;
         }
         break;
 
       case CommState::WIFI_LOST:
-        SerialDebug.println("COMMSTATE - Lost WiFi");
+        DoLog.warning("Lost WiFi", "comm-state");
         if (publisher) destroy_publisher();
         commState = CommState::AWAITING_WIFI;
         break;
@@ -176,10 +185,10 @@ namespace SmartMeter {
   void SmartDigitalMeter::setup_publisher(void) {
     if (publisher) destroy_publisher();
 
-    SerialDebug.println("SMART - Creating new MQTT publisher");
-    publisher = new DatagramPublisher(&SerialDebug);
+    DoLog.verbose("Creating new MQTT publisher", "smart");
+    publisher = new DatagramPublisher();
     if (!publisher) {
-      SerialDebug.println("SMART - Serious fail. Could not create MQTT publisher");
+      DoLog.error("Serious fail. Could not create MQTT publisher", "smart");
       // Panic here ?
       return;
     }
@@ -189,7 +198,7 @@ namespace SmartMeter {
 
   void SmartDigitalMeter::destroy_publisher(void) {
     if (publisher) {
-      SerialDebug.println("SMART - Destroying MQTT publisher");
+      DoLog.verbose("Destroying MQTT publisher", "smart");
       // publisher->on_mqtt_event(nullptr);      // Don't want the events anymore
       publisher->disconnect();
       delete publisher;

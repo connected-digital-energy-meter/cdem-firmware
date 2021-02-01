@@ -8,6 +8,10 @@
 */
 #pragma once
 
+// Define a serial for debugging and for reading the meter
+#define SerialDebug Serial
+#define SerialMeter Serial1
+
 // Baud rate for both hardware and software serial
 #define SERIAL_DEBUG_BAUDRATE 115200
 #define METER_BAUDRATE 115200
@@ -29,7 +33,3 @@
 
 // Sensitivity of Touch - Higher = more sensitive
 #define TOUCH_SENSITIVITY 30
-
-// Define a serial for debugging and for reading the meter
-#define SerialDebug Serial
-#define SerialMeter Serial1

@@ -1,35 +1,31 @@
 #include "digital_meter.h"
 #include "crc_checker.h"
-
+#include "../logging/logger.h"
 namespace SmartMeter {
 
-  #define Debug(...) if(this->debugSerial) this->debugSerial->print(__VA_ARGS__); 
-  #define DebugLn(...) if(this->debugSerial) this->debugSerial->println(__VA_ARGS__); 
-
-  DigitalMeter::DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial, HardwareSerial * debugSerial) {\
+  DigitalMeter::DigitalMeter(int requestPin, DeviceStatus * deviceStatus, HardwareSerial * serial) {
     this->deviceStatus = deviceStatus;
     this->requestPin = requestPin;
     this->serial = serial;
-    this->debugSerial = debugSerial;
     pinMode(requestPin, OUTPUT);
   }
 
   void DigitalMeter::enable(void) {
-    DebugLn("Enabling the digital meter data request");
+    DoLog.verbose("Enabling the digital meter data request", "digital-meter");
     digitalWrite(requestPin, HIGH);
     readPointer = 0;
     startDetected = false;
   }
 
   void DigitalMeter::disable(void) {
-    DebugLn("Disabling the digital meter data request");
+    DoLog.verbose("Disabling the digital meter data request", "digital-meter");
     digitalWrite(requestPin, LOW);    
   }
 
   void DigitalMeter::timeout(void) {
     digitalWrite(requestPin, LOW);
     deviceStatus->meter_error();
-    DebugLn("Communication with the smartmeter timed out!");        
+    DoLog.warning("Communication with the smartmeter timed out", "digital-meter");
   }
 
   // Read a new datagram from the P1 port
@@ -43,33 +39,34 @@ namespace SmartMeter {
       if (incomingByte == '/') {
         readPointer = 0;
         startDetected = true;
-        DebugLn("Detected start of a datagram");
+        DoLog.verbose("Detected start of a datagram", "digital-meter");
         clear_buffer(buffer, bufferLength);
       }
 
       // Ignore all data on serial port if start was not detected
       if (startDetected) {
         buffer[readPointer++] = incomingByte;
-        Debug(incomingByte);
+        // Debug(incomingByte);
 
         // Look for the end of the datagram
         if (incomingByte == '\n' && buffer[readPointer-7] == '!') {
-          DebugLn("Read in full datagram");
+          DoLog.verbose("Read in full datagram", "digital-meter");
           startDetected = false;
           buffer[readPointer] = '\0';   // Null-terminate buffer
 
-          DebugLn("Checking datagram CRC");
+          DoLog.verbose(String(buffer), "digital-meter");
+
           if (CrcChecker::check_crc(buffer, readPointer)) {
-            DebugLn("Datagram is valid");
+            DoLog.verbose("Datagram is valid (CRC check passed)", "digital-meter");
             deviceStatus->meter_data_ready();
             return true;
           } else {
-            DebugLn("Datagram is invalid - CRC Check Failed");
+            DoLog.warning("Datagram is invalid (CRC check failed)", "digital-meter");
             return false;
           }
 
         } else if (readPointer >= bufferLength) {    // End of datagram not found
-          DebugLn("Invalid Datagram > No end detected");
+          DoLog.warning("Datagram is invalid (could not detect END)", "digital-meter");
           clear_buffer(buffer, bufferLength);
           readPointer = 0;
           startDetected = false;

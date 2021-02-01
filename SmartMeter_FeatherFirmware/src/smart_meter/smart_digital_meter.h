@@ -65,6 +65,7 @@ namespace SmartMeter {
       CommState commState = CommState::AWAITING_WIFI;
       int mqttTimeoutCounter = 0;
       unsigned long lastCommCheck = 0;
+      int wifiTimeoutCounter = 0;
 
       DeviceStatus * deviceStatus;
       Configuration * deviceConfig;

@@ -22,10 +22,10 @@ namespace SmartMeter {
   }
 
   String Datagram::to_string() {
-    String output = "";
+    String output = "Datagram:\n";
 
     for(std::map<String,double>::iterator it = data.begin(); it != data.end(); it++) {
-      output += "\t " + it->first + ": " + String(it->second) + "\n";
+      output += "\t " + it->first + ": " + String(it->second) + (it != data.end() ? "\n" : "");
     }
 
     return output;

@@ -85,7 +85,7 @@ namespace SmartMeter {
     config->mqtt_topic(request_input("MQTT Broker Topic",
                                     config->mqtt_topic(),
                                     &validator,
-                                    "level/level/level - myhome/metering/smartmeter"
+                                    "[level/level/level] - myhome/metering/smartmeter"
                                     ));
   }
 

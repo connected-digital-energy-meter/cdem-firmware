@@ -10,6 +10,9 @@ namespace SmartMeter {
     } else if (value[0] == '/') {
       this->validation_error("Value should not start with a leading slash '/'.");
       return false;
+    } else if (value[value.length()-1] == '/') {
+      this->validation_error("Value should not end with a trailing slash '/'.");
+      return false;
     }
 
     value.toLowerCase();

@@ -122,6 +122,10 @@ namespace SmartMeter {
       }
     } while (!valid);
 
-    return (input == "") ? value : input;
+    String result = (input == "") ? value : input;
+
+    userSerial->println(key + " is configured as \"" + result + "\"");
+
+    return result;
   }
 };

@@ -32,6 +32,12 @@ More info at [https://github.com/marvinroger/async-mqtt-client](https://github.c
 
 This library has the following dependency: [https://github.com/me-no-dev/AsyncTCP](https://github.com/me-no-dev/AsyncTCP). Install it the same way.
 
+### Arduino JSON
+
+https://arduinojson.org/?utm_source=meta&utm_medium=library.properties
+
+Search for `ArduinoJson` in library (by Benoit Blanchon) and install `v6.17.2`.
+
 ## Problems
 
 (Linux) Python not found in path but 3.x is installed. Just set python3 as alternative:

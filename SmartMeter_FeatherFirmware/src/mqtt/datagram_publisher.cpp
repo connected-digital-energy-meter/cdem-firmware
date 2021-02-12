@@ -1,5 +1,6 @@
 #include "datagram_publisher.h"
 #include "../logging/logger.h"
+#include <ArduinoJson.h>
 
 namespace SmartMeter {
 
@@ -77,11 +78,20 @@ namespace SmartMeter {
 
     bool schededuleOk = true;
     std::vector<String> keys = datagram->keys();
+
+    StaticJsonDocument<1000> json;
+
     for (String key : keys) {
-      String topic = baseTopic + key;
+      String topic = baseTopic + "/" + key;
       String data = String(datagram->get(key));
       schededuleOk = schededuleOk && mqttClient.publish(topic.c_str(), 1, true, data.c_str());
+      json[key] = datagram->get(key);
     }
+
+    String payload = "";
+    serializeJson(json, payload);
+    String topic = baseTopic + "/payload";
+    schededuleOk = schededuleOk && mqttClient.publish(topic.c_str(), 1, true, payload.c_str());
     
     if (schededuleOk) {
       DoLog.info("Datagram scheduled for publish", "mqtt");

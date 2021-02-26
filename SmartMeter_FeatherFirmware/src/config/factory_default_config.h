@@ -7,7 +7,7 @@ namespace SmartMeter {
 
   #define MQTT_DEFAULT_BROKER "192.168.0.1"
   #define MQTT_DEFAULT_PORT 1883
-  #define MQTT_DEFAULT_TOPIC "iot/vives/smartmeter"
+  #define MQTT_DEFAULT_TOPIC "iot/myhome/cdem"
 
   #define NETWORK_USE_DHCP true
   #define NETWORK_DEFAULT_IP "192.168.12.1"

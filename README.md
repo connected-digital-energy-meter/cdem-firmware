@@ -1,4 +1,4 @@
-# Fluvius Smart Meter Reader
+# Connected Digital Energy Meter - Firmware
 
 Only tested with a [Feather Huzzah32](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather) with an ESP32-WROOM-32 chip.
 

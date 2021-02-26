@@ -82,7 +82,7 @@ namespace SmartMeter {
     };
 
     for (size_t i = 0; i < sizeof(listing)/sizeof(UtilityKeyValue); i++) {
-      if (parse_data_value(buffer, listing[i].key, &(listing[i].value))) {
+      if (parse_data_value(buffer, listing[i].key, &(listing[i].value), listing[i].unitted, listing[i].datablockNumber)) {
         output.set(String(listing[i].id), listing[i].value);
       }
     }

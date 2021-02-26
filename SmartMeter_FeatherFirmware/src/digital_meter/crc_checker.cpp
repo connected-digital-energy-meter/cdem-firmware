@@ -46,7 +46,10 @@ namespace SmartMeter {
     unsigned int crc = calculate_crc(buffer + begin, buffer + end);
 
     String crccalc(crc,HEX);
-    crccalc.toUpperCase();        
+    crccalc.toUpperCase();
+    while (crccalc.length() < 4) {
+      crccalc = "0" + crccalc;
+    }
 
     return(crccalc == crcvalidation);
   }

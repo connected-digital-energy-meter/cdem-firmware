@@ -12,6 +12,7 @@
 
 // Include custom libraries
 #include "hardware.h"
+#include "version.h"
 #include "src/boot/boot_manager.h"
 #include "src/smart_meter/smart_digital_meter.h"
 #include "src/helpers/ip_parser.h"
@@ -54,6 +55,7 @@ void setup() {
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
 
   SerialDebug.println("Starting Connected Digital Energy Meter firmware ...");
+  SerialDebug.println("Firmware version: " + String(FIRMWARE_VERSION));
   deviceStatus.booting();
   delay(5000);    // Give some time to open serial terminal
 

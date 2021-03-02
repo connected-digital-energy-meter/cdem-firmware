@@ -77,8 +77,8 @@ namespace SmartMeter {
       { "1-0:41.7.0", "l2_power_consumption", 0.0, true, 1 },
       { "1-0:61.7.0", "l3_power_consumption", 0.0, true, 1 },
       { "0-0:96.14.0", "actual_tarif", 0.0, false, 1 },
-      { "0-1:24.2.3", "gas_meter_m3", true, 2 },
-      { "0-2:24.2.1", "water_meter_m3", true, 2 }
+      { "0-1:24.2.3", "gas_meter_m3", 0.0, true, 2 },
+      { "0-2:24.2.1", "water_meter_m3", 0.0, true, 2 }
     };
 
     for (size_t i = 0; i < sizeof(listing)/sizeof(UtilityKeyValue); i++) {

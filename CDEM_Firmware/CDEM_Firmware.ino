@@ -62,45 +62,6 @@ void connect_to_wifi(const Configuration * configuration) {
   if (WiFi.status() == WL_CONNECTED) DoLog.info("Successfully connected to WiFi", "wifi");
 }
 
-void configure_system() {
-  // 1. Try loading from EEPROM
-  DoLog.info("Loading configuration from EEPROM ...", "setup");
-  if (!configManager.load_configuration()) {
-    DoLog.warning("Configuration load from EEPROM failed. Loading factory defaults", "setup");
-    configManager.factory_default();
-  }
-
-  // 2. Setup configuration portal
-  DoLog.info("Setting up Captive Portal for configuration via WiFi", "setup");
-  CaptivePortal * portal = new CaptivePortal(
-    CAPTIVE_PORTAL_SSID,
-    CAPTIVE_PORTAL_PASSWORD,
-    CAPTIVE_PORTAL_TIME_WINDOW
-  );
-  portal->start(*configManager.current_config());
-  deviceStatus.config_portal_up();
-
-  while (!portal->process());   // Wait for Captive Portal to finish
-
-  DoLog.verbose("Captive Portal finished ...", "setup");
-  Configuration newConfiguration = portal->resulting_configuration();
-
-  delete portal;
-
-  // 3. Default = no boot; Altered = save to EEPROM
-  if (newConfiguration == Configuration()) {
-    DoLog.error("Not booting any further until device is properly configured.", "setup");
-    deviceStatus.not_configured();
-    while(true) { delay(1000); }
-  } else if (newConfiguration != *(configManager.current_config())) {
-    DoLog.verbose("Configuration has been altered via portal. Saving new config to EEPROM ...", "setup");
-    configManager.current_config(newConfiguration);
-    if (configManager.save_configuration()) {
-      DoLog.info("Successfully saved new configuration to EEPROM", "setup");
-    }   // What on fail ?
-  }
-}
-
 void setup() {
   WiFi.setOutputPower(PORTAL_WIFI_OUTPUT_POWER);
   SerialDebug.begin(SERIAL_DEBUG_BAUDRATE);
@@ -112,7 +73,7 @@ void setup() {
   DoLog.info("Firmware version: " + String(FIRMWARE_VERSION));
   DoLog.info("CDEM Library version: " + String(CDEM_LIB_VERSION));
 
-  configure_system();
+  System::configure(&configManager, &deviceStatus);
 
   DoLog.info("Booting with configuration", "setup");
   DoLog.info("\n" + configManager.current_config()->to_string(), "setup");

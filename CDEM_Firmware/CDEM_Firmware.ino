@@ -13,6 +13,25 @@ PubSubPublisher publisher(wifiClient);    // Passed-by-reference
 DeviceStatus deviceStatus(DATA_LED_PIN, COMM_LED_PIN);
 ConfigurationManager configManager(EEPROM_CONFIG_ID, EEPROM_CONFIG_SIZE);
 
+unsigned long lastCommCheck = 0;
+
+void check_communications(void) {
+  if (WiFi.status() != WL_CONNECTED) {
+    DoLog.warning("Not connected to WiFi", "comm-state");
+    deviceStatus.connecting_wifi();
+    return;
+  }
+
+  if (!publisher.is_connected()) {
+    DoLog.warning("Not connected to MQTT broker", "comm-state");
+    deviceStatus.wifi_no_mqtt();
+    return;
+  }
+      
+  DoLog.verbose("All communications operational", "comm-state");
+  deviceStatus.communications_ok();
+}
+
 void connect_to_wifi(const Configuration * configuration) {
   DoLog.info("Connecting to WiFi ...", "wifi");
   WiFi.setOutputPower(OPERATIONAL_WIFI_OUTPUT_POWER);
@@ -121,6 +140,13 @@ void setup() {
 }
 
 void loop() {
+  // Current time for period
+  unsigned long currentMillis = millis();
+  if ((currentMillis - lastCommCheck) >= 10000) {
+    check_communications();
+    lastCommCheck = currentMillis;
+  }
+
   smartMeter.process();
   yield();
 }

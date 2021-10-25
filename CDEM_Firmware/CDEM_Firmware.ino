@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 
-#define CDEM_PCB_V4
+#define CDEM_PCB_V5
 #include <CDEM.h>
 #include <mqtt/pub_sub_publisher.h>
 #include "version.h"
@@ -69,7 +69,7 @@ void setup() {
   // DoLog.set_level(Logger::LogLevel::WARNING);
   delay(5000);    // Give some time to open serial terminal
 
-  DoLog.info("\n\nStarting Connected Digital Energy Meter firmware ...", "setup");
+  DoLog.info("Starting Connected Digital Energy Meter firmware ...", "setup");
   DoLog.info("Firmware version: " + String(FIRMWARE_VERSION));
   DoLog.info("CDEM Library version: " + String(CDEM_LIB_VERSION));
 

@@ -2,7 +2,7 @@
 
 Firmware for the Connected Digital Energy Meter hardware.
 
-Find all documentation at [Connected Digital Energy Meter](https://connected-digital-energy-meter.netlify.app/03_firmware/#download-the-latest-firmware).
+Find all documentation at [Connected Digital Energy Meter](https://www.cdem.be/).
 
 ## Problems
 

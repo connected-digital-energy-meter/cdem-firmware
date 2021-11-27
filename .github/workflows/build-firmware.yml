@@ -12,6 +12,7 @@ on:
       - v*
 
 env:
+  SKETCH: CDEM_Firmware
   IMAGE_NAME: cdem_firmware
 
 jobs:
@@ -54,4 +55,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{env.filename}}
-        path: ${{github.workspace}}/CDEM_Firmware/build/esp8266.esp8266.generic
+        path: ${{github.workspace}}/${SKETCH}/build/esp8266.esp8266.generic/${SKETCH}.ino.bin

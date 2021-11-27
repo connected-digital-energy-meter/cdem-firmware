@@ -56,4 +56,4 @@ jobs:
       with:
         name: ${{env.filename}}
         path: |
-          ${{github.workspace}}/${SKETCH}/build/esp8266.esp8266.generic/${SKETCH}.ino.bin
+          ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin

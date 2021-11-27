@@ -47,8 +47,7 @@ jobs:
         # Strip "v" prefix from tag name
         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
-        echo $IMAGE_NAME_$VERSION
-        echo "filename=$IMAGE_NAME_$VERSION" >> $GITHUB_ENV
+        echo "filename=${IMAGE_NAME}_${VERSION}" >> $GITHUB_ENV
 
       # Add binary as build artifact
     - name: Upload a Build Artifact

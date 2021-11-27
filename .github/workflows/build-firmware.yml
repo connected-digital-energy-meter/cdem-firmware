@@ -57,4 +57,3 @@ jobs:
         name: ${{env.filename}}
         path: |
           ${{github.workspace}}/${SKETCH}/build/esp8266.esp8266.generic/${SKETCH}.ino.bin
-          /home/runner/.arduino15/packages/esp8266/hardware/esp8266/3.0.0/tools/upload.py

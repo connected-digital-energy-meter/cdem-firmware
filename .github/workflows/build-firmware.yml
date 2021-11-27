@@ -53,5 +53,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{env.file_name}}
+        name: ${{env.filename}}
         path: ${{github.workspace}}/CDEM_Firmware/build/esp8266.esp8266.generic

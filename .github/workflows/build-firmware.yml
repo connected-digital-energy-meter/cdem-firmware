@@ -8,8 +8,11 @@ on:
       - dev
 
     # Publish `v1.2.3` tags as releases.
-    # tags:
-    #   - v*
+    tags:
+      - v*
+
+env:
+  IMAGE_NAME: cdem_firmware
 
 jobs:
   build:
@@ -35,10 +38,21 @@ jobs:
         required-libraries: PubSubClient@2.8.0,ArduinoJson@6.18.0
         set-build-path: true
         debug-compile: true
+    
+    - name: Package Name
+      run: |
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+        echo $IMAGE_NAME_$VERSION
+        echo "filename=$IMAGE_NAME_$VERSION" >> $GITHUB_ENV
 
       # Add binary as build artifact
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: 'binary'
+        name: ${{env.file_name}}
         path: ${{github.workspace}}/CDEM_Firmware/build/esp8266.esp8266.generic

@@ -50,13 +50,17 @@ jobs:
 
         echo "filename=${IMAGE_NAME}_${VERSION}" >> $GITHUB_ENV
 
-      # Add binary as build artifact
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{env.filename}}
-        path: |
-          ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin
+    # Add binary as build artifact
+    # - name: Upload a Build Artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: ${{env.filename}}
+    #     path: |
+    #       ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin
+
+    - name: Create release zip
+      run: |
+        zip --junk-paths ${{env.filename}} ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin
 
     - name: Create Release
       id: create_release

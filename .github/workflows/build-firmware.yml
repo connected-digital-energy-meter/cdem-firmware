@@ -1,0 +1,55 @@
+name: Build Firmware
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+
+env:
+  SKETCH: CDEM_Firmware
+  IMAGE_NAME: cdem_firmware
+
+jobs:
+  build:
+    name: Compile for ESP12s
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Checkout CDEM library
+      uses: actions/checkout@v2
+      with:
+        repository: connected-digital-energy-meter/connected-digital-energy-meter
+        ref: master
+        path: CustomLibrary_connected-digital-energy-meter # must contain string "Custom"
+
+    - name: Compile Firmware
+      uses: ArminJo/arduino-test-compile@v3
+      with:
+        arduino-board-fqbn: esp8266:esp8266:generic:xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,ResetMethod=nodemcu,CrystalFreq=26,FlashFreq=40,FlashMode=dout,eesz=1M64,led=2,sdk=nonosdk_190703,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200
+        platform-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+        required-libraries: PubSubClient@2.8.0,ArduinoJson@6.18.0
+        set-build-path: true
+        debug-compile: true
+    
+    - name: Package Name
+      run: |
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+        echo "version=${VERSION}" >> $GITHUB_ENV
+        echo "filename=${IMAGE_NAME}_${VERSION}" >> $GITHUB_ENV
+
+    # Add binary as build artifact
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{env.filename}}
+        path: |
+          ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin

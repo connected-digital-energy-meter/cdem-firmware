@@ -1,0 +1,76 @@
+name: Draft Release
+
+on:
+  push:
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+env:
+  SKETCH: CDEM_Firmware
+  IMAGE_NAME: cdem_firmware
+
+jobs:
+  build:
+    name: Compile for ESP12s
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Checkout CDEM library
+      uses: actions/checkout@v2
+      with:
+        repository: connected-digital-energy-meter/connected-digital-energy-meter
+        ref: master
+        path: CustomLibrary_connected-digital-energy-meter # must contain string "Custom"
+
+    - name: Compile Firmware
+      uses: ArminJo/arduino-test-compile@v3
+      with:
+        arduino-board-fqbn: esp8266:esp8266:generic:xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,ResetMethod=nodemcu,CrystalFreq=26,FlashFreq=40,FlashMode=dout,eesz=1M64,led=2,sdk=nonosdk_190703,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200
+        platform-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+        required-libraries: PubSubClient@2.8.0,ArduinoJson@6.18.0
+        set-build-path: true
+        debug-compile: false
+    
+    - name: Package Name
+      run: |
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+        echo "version=${VERSION}" >> $GITHUB_ENV
+        # Remove dots from filename. It makes zip remove .zip extension from output filename
+        echo "filename=$(echo ${IMAGE_NAME}_${VERSION} | sed -e 's/\./_/g')" >> $GITHUB_ENV
+
+    - name: Create release zip
+      run: |
+        zip --junk-paths ${{env.filename}} ${{github.workspace}}/${{env.SKETCH}}/build/esp8266.esp8266.generic/${{env.SKETCH}}.ino.bin
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{env.version}}
+        release_name: Release v${{env.version}}
+        body: |
+            Description needs to be filled in
+        draft: true
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./${{env.filename}}.zip
+        asset_name: ${{env.filename}}.zip
+        asset_content_type: application/zip

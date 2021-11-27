@@ -1,4 +1,4 @@
-name: Build Firmware
+name: Draft Release
 
 on:
   push:
@@ -44,7 +44,8 @@ jobs:
         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
         echo "version=${VERSION}" >> $GITHUB_ENV
-        echo "filename=${IMAGE_NAME}_${VERSION}" >> $GITHUB_ENV
+        # Remove dots from filename. It makes zip remove .zip extension from output filename
+        echo "filename=$(echo ${IMAGE_NAME}_${VERSION} | sed -e 's/\./_/g')" >> $GITHUB_ENV
 
     - name: Create release zip
       run: |

@@ -89,8 +89,11 @@ void setup() {
   // Configure MQTT Publisher
   publisher.connect(
     configManager.current_config()->mqtt_broker(),
-    configManager.current_config()->mqtt_port()
+    configManager.current_config()->mqtt_port(),
+    configManager.current_config()->mqtt_username(),
+    configManager.current_config()->mqtt_password()
   );
+  
   delay(1000);
 
   // Start Smart Meter
